@@ -2,25 +2,58 @@
 
 > An AI-powered job discovery platform that helps users search, understand, and find relevant job opportunities through natural-language search, semantic matching, personalized recommendations, and resume-based matching.
 
-## 📸 Project Screenshots
+---
 
-> **Note:** The preview images in this repository are representative UI mockups based on the project's current design. Replace them with the actual exported application screenshots when available.
+## 📸 Project Preview
+
+The application provides a professional and consistent interface with a warm creamy background, white cards, and muted mauve accents.
 
 ### Jobs
+
 ![Jobs Page](screenshots/jobs.png)
 
+The **Jobs** section allows users to browse and search available job opportunities using information such as job title, company, location, skills, and other attributes.
+
 ### AI Job Assistant
+
 ![AI Job Assistant](screenshots/ai-assistant.png)
 
+The **AI Job Assistant** allows users to describe the type of job they are looking for using natural language.
+
+Example:
+
+> Find remote Python developer jobs
+
+The assistant processes the request and helps retrieve relevant opportunities.
+
 ### Recommendations
+
 ![Recommendations](screenshots/recommendations.png)
 
+The **Recommendations** section presents personalized job matches.
+
+Recommendations can show:
+
+- AI Match
+- Semantic Match
+- Skill Match
+- Role Match
+- Location Match
+
 ### Resume Match
+
 ![Resume Match](screenshots/resume-match.png)
+
+The **Resume Match** functionality allows users to upload a resume and receive job recommendations based on their profile.
+
+Supported formats:
+
+- PDF
+- DOCX
 
 ---
 
-## 📌 Overview
+# 📌 Overview
 
 Traditional job portals often depend heavily on keyword-based search.
 
@@ -46,11 +79,13 @@ The application combines:
 
 ---
 
-## ✨ Core Features
+# ✨ Core Features
 
-### 🔎 Job Search
+## 🔎 Job Search
 
-Users can browse and search a large collection of job opportunities using:
+Users can browse and search a large collection of job opportunities.
+
+Job information can include:
 
 - Job title
 - Company
@@ -60,9 +95,11 @@ Users can browse and search a large collection of job opportunities using:
 - Employment type
 - Other job attributes
 
-### 🤖 AI Job Assistant
+Structured job data is stored in PostgreSQL.
 
-Users can search for jobs using natural language.
+## 🤖 AI Job Assistant
+
+The AI Job Assistant supports natural-language job discovery.
 
 Examples:
 
@@ -78,9 +115,15 @@ Show me Data Scientist jobs in Bengaluru
 Find AI Engineer jobs with Machine Learning experience
 ```
 
-Capabilities include natural-language search, intent understanding, semantic matching, relevant retrieval, and ranked results.
+Capabilities include:
 
-### 🧠 Semantic Job Matching
+- Natural-language search
+- Intent understanding
+- Semantic matching
+- Relevant job retrieval
+- Ranked job results
+
+## 🧠 Semantic Job Matching
 
 The platform uses semantic similarity to identify jobs related in meaning, even when exact keywords differ.
 
@@ -94,7 +137,7 @@ can be semantically related to:
 AI Engineer with Deep Learning experience
 ```
 
-Flow:
+### Semantic Search Flow
 
 ```text
 User Query
@@ -112,9 +155,9 @@ Matching / Ranking
 Final Results
 ```
 
-### 🎯 Personalized Recommendations
+## 🎯 Personalized Recommendations
 
-Jobs are ranked using:
+Jobs are ranked using multiple matching factors:
 
 - Semantic similarity
 - Skill match
@@ -132,9 +175,16 @@ Role           88%
 Location       85%
 ```
 
-### 📄 Resume Match
+## 📄 Resume Match
 
-Users can upload PDF or DOCX resumes.
+Users can upload resumes to find relevant job opportunities.
+
+Supported formats:
+
+- PDF
+- DOCX
+
+Flow:
 
 ```text
 Resume Upload
@@ -152,11 +202,11 @@ Ranking
 Relevant Job Recommendations
 ```
 
-PDF files use `pypdf`, DOCX files use `python-docx`, and FastAPI uploads require `python-multipart`.
+PDF files are processed using `pypdf`, DOCX files using `python-docx`, and FastAPI file uploads require `python-multipart`.
 
 ---
 
-## 🏗️ System Architecture
+# 🏗️ System Architecture
 
 ```text
                          ┌───────────────────┐
@@ -198,7 +248,7 @@ PDF files use `pypdf`, DOCX files use `python-docx`, and FastAPI uploads require
 
 ---
 
-## 🛠️ Technology Stack
+# 🛠️ Technology Stack
 
 | Layer | Technology |
 |---|---|
@@ -218,7 +268,7 @@ PDF files use `pypdf`, DOCX files use `python-docx`, and FastAPI uploads require
 
 ---
 
-## 📊 Dataset
+# 📊 Dataset
 
 The raw job dataset is stored at:
 
@@ -226,7 +276,11 @@ The raw job dataset is stored at:
 data/raw/jobs.json
 ```
 
-During development, the ingestion pipeline processed approximately **56,769 job records**.
+During development, the ingestion pipeline processed approximately:
+
+```text
+56,769 job records
+```
 
 After duplicate handling:
 
@@ -236,31 +290,76 @@ After duplicate handling:
 0 errors
 ```
 
+Example:
+
+```text
+INGESTION COMPLETE
+
+Processed:   56,769
+Inserted:    45,579
+Duplicates:  11,190
+Errors:      0
+```
+
 ---
 
-## 📁 Project Structure
+# 📁 Project Structure
 
 ```text
 Research Analyst project/
+│
 ├── backend/
 │   ├── app/
 │   │   ├── api/
+│   │   │   ├── routes/
+│   │   │   ├── resume.py
+│   │   │   └── ...
 │   │   ├── services/
+│   │   │   ├── resume_service.py
+│   │   │   └── ...
 │   │   └── main.py
 │   └── requirements.txt
+│
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── ChatWindow.jsx
+│   │   │   ├── RecommendationCard.jsx
+│   │   │   └── ...
 │   │   ├── pages/
+│   │   │   ├── Jobs.jsx
+│   │   │   ├── Assistant.jsx
+│   │   │   ├── Recommendations.jsx
+│   │   │   └── ...
 │   │   └── ...
 │   └── package.json
+│
 ├── scripts/
+│   ├── init_db.py
+│   ├── ingest_jobs.py
+│   ├── index_jobs.py
+│   ├── generate_embeddings.py
+│   ├── deduplicate_jobs.py
+│   ├── enrich_jobs.py
+│   ├── inspect_dataset.py
+│   ├── verify_database.py
+│   ├── reset_jobs.py
+│   ├── test_ingestion.py
+│   ├── test_retrieval.py
+│   └── test_vector_store.py
+│
 ├── data/
+│   ├── raw/
+│   │   └── jobs.json
+│   ├── processed/
+│   └── qdrant/
+│
 ├── screenshots/
 │   ├── jobs.png
 │   ├── ai-assistant.png
 │   ├── recommendations.png
 │   └── resume-match.png
+│
 ├── .env.example
 ├── .gitignore
 └── README.md
@@ -268,16 +367,16 @@ Research Analyst project/
 
 ---
 
-## ⚙️ Installation & Setup
+# ⚙️ Installation & Setup
 
-### Clone
+## Clone
 
 ```bash
 git clone <YOUR_GITHUB_REPOSITORY_URL>
 cd "Research Analyst project"
 ```
 
-### Backend
+## Backend
 
 ```bash
 python -m venv venv
@@ -293,7 +392,7 @@ pip install python-docx
 pip install python-multipart
 ```
 
-### Environment Variables
+## Environment Variables
 
 Create `.env` using `.env.example`:
 
@@ -306,9 +405,17 @@ QDRANT_API_KEY=YOUR_QDRANT_API_KEY
 GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
 ```
 
-Never commit `.env` or real credentials.
+> Never commit `.env` or real credentials to GitHub.
 
-### PostgreSQL
+## PostgreSQL
+
+The application uses PostgreSQL for structured job data.
+
+Connection format:
+
+```text
+postgresql://USERNAME:PASSWORD@HOST:PORT/DATABASE
+```
 
 Initialize:
 
@@ -328,21 +435,31 @@ Verify:
 python scripts\verify_database.py
 ```
 
-### Qdrant
+## Qdrant
 
 Configure Qdrant through `.env`.
 
 Pipeline:
 
 ```text
-Job Data → Processing → Embeddings → Qdrant → Vector Search
+Job Data
+   ↓
+Text Processing
+   ↓
+Embedding Generation
+   ↓
+Qdrant
+   ↓
+Vector Similarity Search
+   ↓
+Relevant Jobs
 ```
 
 ---
 
-## ▶️ Run the Application
+# ▶️ Run the Application
 
-### Backend
+### Terminal 1 — Backend
 
 From the project root:
 
@@ -362,9 +479,7 @@ http://127.0.0.1:8000
 http://127.0.0.1:8000/docs
 ```
 
-### Frontend
-
-Open a second terminal:
+### Terminal 2 — Frontend
 
 ```bash
 cd frontend
@@ -380,7 +495,7 @@ http://localhost:5173
 
 ---
 
-## 🧪 Testing
+# 🧪 Testing
 
 ```bash
 python scripts\test_ingestion.py
@@ -396,7 +511,7 @@ python scripts\test_vector_store.py
 
 ---
 
-## 🎨 UI Design
+# 🎨 UI Design
 
 The frontend follows a consistent professional design system:
 
@@ -410,13 +525,20 @@ The frontend follows a consistent professional design system:
 - Responsive layouts
 - Clean typography
 
-The same visual language is maintained across Jobs, AI Assistant, Recommendations, and Resume Match.
+The same visual language is maintained across:
+
+- Jobs
+- AI Assistant
+- Recommendations
+- Resume Match
 
 ---
 
-## 🔐 Security
+# 🔐 Security
 
-Never commit:
+Never commit sensitive information.
+
+Do not commit:
 
 ```text
 .env
@@ -434,7 +556,7 @@ Use `.env` locally and `.env.example` for documenting required variables.
 
 ---
 
-## 🔀 Git Workflow
+# 🔀 Git Workflow
 
 ```bash
 git pull origin main
@@ -454,35 +576,35 @@ git push origin main
 
 ---
 
-## ⚠️ Common Issues
+# ⚠️ Common Issues
 
-### `ModuleNotFoundError: No module named 'backend'`
+### Backend module error
 
-Run from the project root:
+Use the command from the project root:
 
 ```bash
 python -m uvicorn backend.app.main:app --reload
 ```
 
-### Missing `pypdf`
+### Missing pypdf
 
 ```bash
 pip install pypdf
 ```
 
-### Missing `python-docx`
+### Missing python-docx
 
 ```bash
 pip install python-docx
 ```
 
-Import:
+Python import:
 
 ```python
 from docx import Document
 ```
 
-### Missing `python-multipart`
+### Missing python-multipart
 
 ```bash
 pip install python-multipart
@@ -490,11 +612,18 @@ pip install python-multipart
 
 ### PostgreSQL connection error
 
-Check that PostgreSQL is running and verify the database, username, password, host, port, and `DATABASE_URL`.
+Check that PostgreSQL is running and verify:
+
+- Database
+- Username
+- Password
+- Host
+- Port
+- `DATABASE_URL`
 
 ---
 
-## 📈 Project Status
+# 📈 Project Status
 
 ### Backend
 
@@ -530,7 +659,7 @@ Check that PostgreSQL is running and verify the database, username, password, ho
 
 ---
 
-## 🚀 Future Improvements
+# 🚀 Future Improvements
 
 - Advanced job filtering
 - Improved recommendation ranking
@@ -547,14 +676,18 @@ Check that PostgreSQL is running and verify the database, username, password, ho
 
 ---
 
-## 👥 Contributors
+# 👥 Contributors
 
+### Deepthi
+
+AI / Data / Full-Stack Development
 
 ### Project Collaborator
+
 Backend / Frontend / AI Development
 
 ---
 
-## 📄 License
+# 📄 License
 
 This project is currently intended for educational, portfolio, and development purposes.
