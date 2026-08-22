@@ -7,8 +7,6 @@ from qdrant_client.models import (
     VectorParams,
 )
 
-from sentence_transformers import SentenceTransformer
-
 
 # ============================================================
 # CONFIGURATION
@@ -39,7 +37,11 @@ _client = None
 
 def get_embedding_model():
     """
-    Load the embedding model once and reuse it.
+    Load the embedding model only when embedding functionality
+    is actually required.
+
+    The SentenceTransformer import is intentionally performed
+    inside this function to reduce FastAPI startup memory usage.
     """
 
     global _model
@@ -50,6 +52,9 @@ def get_embedding_model():
             f"Loading embedding model: "
             f"{EMBEDDING_MODEL_NAME}"
         )
+
+        # Lazy import to reduce application startup memory usage
+        from sentence_transformers import SentenceTransformer
 
         _model = SentenceTransformer(
             EMBEDDING_MODEL_NAME
