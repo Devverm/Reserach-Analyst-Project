@@ -1,53 +1,36 @@
 function RecommendationCard({ job }) {
-  const finalScore = Math.round(
-    (job.final_score || 0) * 100
-  );
-
-  const semanticScore = Math.round(
-    (job.similarity_score || 0) * 100
-  );
-
-  const skillScore = Math.round(
-    (job.skill_match || 0) * 100
-  );
-
-  const roleScore = Math.round(
-    (job.role_match || 0) * 100
-  );
-
-  const locationScore = Math.round(
-    (job.location_match || 0) * 100
-  );
+  const finalScore = Math.round((job.final_score || 0) * 100);
+  const semanticScore = Math.round((job.similarity_score || 0) * 100);
+  const skillScore = Math.round((job.skill_match || 0) * 100);
+  const roleScore = Math.round((job.role_match || 0) * 100);
+  const locationScore = Math.round((job.location_match || 0) * 100);
 
   return (
     <div
       style={{
         background: "#ffffff",
-        padding: "22px",
-        borderRadius: "13px",
-        border: "1px solid #e8eaf0",
-        boxShadow: "none",
+        border: "1px solid #e5e1e7",
+        borderRadius: "18px",
+        padding: "24px 26px",
+        boxShadow: "0 2px 10px rgba(31, 24, 34, 0.035)",
         transition:
-          "transform 0.2s ease, box-shadow 0.2s ease",
+          "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
       }}
       onMouseEnter={(event) => {
-        event.currentTarget.style.transform =
-          "translateY(-2px)";
-
+        event.currentTarget.style.transform = "translateY(-2px)";
         event.currentTarget.style.boxShadow =
-          "0 12px 28px rgba(15, 23, 42, 0.07)";
+          "0 12px 30px rgba(31, 24, 34, 0.08)";
+        event.currentTarget.style.borderColor = "#d8cbd8";
       }}
       onMouseLeave={(event) => {
-        event.currentTarget.style.transform =
-          "translateY(0)";
-
+        event.currentTarget.style.transform = "translateY(0)";
         event.currentTarget.style.boxShadow =
-          "none";
+          "0 2px 10px rgba(31, 24, 34, 0.035)";
+        event.currentTarget.style.borderColor = "#e5e1e7";
       }}
     >
-
       {/* =====================================================
-          TOP SECTION
+          HEADER
       ===================================================== */}
 
       <div
@@ -58,64 +41,50 @@ function RecommendationCard({ job }) {
           gap: "20px",
         }}
       >
-
-        <div>
-
-          {/* JOB TITLE */}
-
+        <div style={{ minWidth: 0 }}>
           <h2
             style={{
-              margin: "0 0 6px",
-              color: "#111827",
+              margin: "0 0 7px",
+              color: "#17131a",
               fontSize: "18px",
               lineHeight: "1.35",
-              fontWeight: "800",
-              letterSpacing: "-0.3px",
+              fontWeight: "750",
+              letterSpacing: "-0.35px",
             }}
           >
             {job.title || "Job Title"}
           </h2>
 
-
-          {/* COMPANY */}
-
           <div
             style={{
-              color: "#4b5563",
-              fontSize: "13px",
-              fontWeight: "650",
+              color: "#625c64",
+              fontSize: "12px",
+              fontWeight: "600",
             }}
           >
             {job.company || "Company not specified"}
           </div>
-
         </div>
 
-
-        {/* AI MATCH BADGE */}
+        {/* MATCH BADGE */}
 
         <div
           style={{
             flexShrink: 0,
-            padding: "7px 10px",
-            borderRadius: "9px",
+            padding: "7px 11px",
+            borderRadius: "999px",
             background:
-              finalScore >= 70
-                ? "#ecfdf5"
-                : "#f5f3ff",
+              finalScore >= 70 ? "#eefaf4" : "#f4edf5",
             color:
-              finalScore >= 70
-                ? "#047857"
-                : "#6d28d9",
+              finalScore >= 70 ? "#087443" : "#684461",
             fontSize: "11px",
-            fontWeight: "800",
+            fontWeight: "750",
+            whiteSpace: "nowrap",
           }}
         >
           ✦ {finalScore}% Match
         </div>
-
       </div>
-
 
       {/* =====================================================
           LOCATION
@@ -123,58 +92,46 @@ function RecommendationCard({ job }) {
 
       <div
         style={{
-          marginTop: "10px",
-          color: "#6b7280",
-          fontSize: "12px",
+          marginTop: "11px",
+          color: "#777078",
+          fontSize: "11px",
+          lineHeight: "1.5",
         }}
       >
         📍 {job.location || "Location not specified"}
       </div>
 
-
       {/* =====================================================
           SKILLS
       ===================================================== */}
 
-      {Array.isArray(job.skills) &&
-        job.skills.length > 0 && (
-
+      {Array.isArray(job.skills) && job.skills.length > 0 && (
         <div
           style={{
             display: "flex",
             flexWrap: "wrap",
             gap: "6px",
             marginTop: "14px",
-            marginBottom: "16px",
           }}
         >
-
-          {job.skills
-            .slice(0, 12)
-            .map((skill, index) => (
-
-              <span
-                key={index}
-                style={{
-                  background: "#f5f3ff",
-                  border:
-                    "1px solid #ede9fe",
-                  color: "#5b21b6",
-                  padding: "5px 9px",
-                  borderRadius: "999px",
-                  fontSize: "10px",
-                  fontWeight: "600",
-                }}
-              >
-                {skill}
-              </span>
-
-            ))}
-
+          {job.skills.slice(0, 12).map((skill, index) => (
+            <span
+              key={index}
+              style={{
+                background: "#f8f4f9",
+                border: "1px solid #eee6f0",
+                color: "#684461",
+                padding: "5px 9px",
+                borderRadius: "999px",
+                fontSize: "10px",
+                fontWeight: "600",
+              }}
+            >
+              {skill}
+            </span>
+          ))}
         </div>
-
       )}
-
 
       {/* =====================================================
           SCORE SUMMARY
@@ -182,78 +139,69 @@ function RecommendationCard({ job }) {
 
       <div
         style={{
-          borderTop:
-            "1px solid #f0f1f5",
+          marginTop: "18px",
           paddingTop: "14px",
+          borderTop: "1px solid #eeecef",
           display: "flex",
-          alignItems: "center",
           justifyContent: "space-between",
+          alignItems: "center",
           gap: "15px",
           flexWrap: "wrap",
         }}
       >
-
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "16px",
+            gap: "18px",
             flexWrap: "wrap",
           }}
         >
-
-          {/* AI MATCH */}
-
           <span
             style={{
-              color: "#374151",
+              color: "#4e474f",
               fontSize: "11px",
-              fontWeight: "650",
+              fontWeight: "600",
             }}
           >
             AI Match{" "}
             <strong
               style={{
-                color: "#4f46e5",
+                color: "#684461",
+                fontWeight: "750",
               }}
             >
               {finalScore}%
             </strong>
           </span>
 
-
-          {/* SEMANTIC */}
-
           <span
             style={{
-              color: "#9ca3af",
+              color: "#99939a",
               fontSize: "11px",
             }}
           >
             Semantic{" "}
             <strong
               style={{
-                color: "#6b7280",
+                color: "#6e676f",
+                fontWeight: "650",
               }}
             >
               {semanticScore}%
             </strong>
           </span>
-
         </div>
-
 
         <span
           style={{
-            color: "#9ca3af",
+            color: "#aaa4aa",
             fontSize: "10px",
           }}
         >
           Personalized match
         </span>
-
       </div>
-
 
       {/* =====================================================
           MATCH BREAKDOWN
@@ -267,53 +215,56 @@ function RecommendationCard({ job }) {
           marginTop: "12px",
         }}
       >
+        <div
+          style={{
+            background: "#faf9fa",
+            border: "1px solid #eeecef",
+            borderRadius: "8px",
+            padding: "5px 9px",
+            fontSize: "10px",
+            color: "#777078",
+          }}
+        >
+          Skill{" "}
+          <strong style={{ color: "#514a52" }}>
+            {skillScore}%
+          </strong>
+        </div>
 
         <div
           style={{
-            background: "#f8fafc",
-            border: "1px solid #eef0f4",
-            borderRadius: "7px",
-            padding: "5px 8px",
+            background: "#faf9fa",
+            border: "1px solid #eeecef",
+            borderRadius: "8px",
+            padding: "5px 9px",
             fontSize: "10px",
-            color: "#6b7280",
+            color: "#777078",
           }}
         >
-          Skill <strong>{skillScore}%</strong>
+          Role{" "}
+          <strong style={{ color: "#514a52" }}>
+            {roleScore}%
+          </strong>
         </div>
-
 
         <div
           style={{
-            background: "#f8fafc",
-            border: "1px solid #eef0f4",
-            borderRadius: "7px",
-            padding: "5px 8px",
+            background: "#faf9fa",
+            border: "1px solid #eeecef",
+            borderRadius: "8px",
+            padding: "5px 9px",
             fontSize: "10px",
-            color: "#6b7280",
+            color: "#777078",
           }}
         >
-          Role <strong>{roleScore}%</strong>
+          Location{" "}
+          <strong style={{ color: "#514a52" }}>
+            {locationScore}%
+          </strong>
         </div>
-
-
-        <div
-          style={{
-            background: "#f8fafc",
-            border: "1px solid #eef0f4",
-            borderRadius: "7px",
-            padding: "5px 8px",
-            fontSize: "10px",
-            color: "#6b7280",
-          }}
-        >
-          Location <strong>{locationScore}%</strong>
-        </div>
-
       </div>
-
     </div>
   );
 }
-
 
 export default RecommendationCard;

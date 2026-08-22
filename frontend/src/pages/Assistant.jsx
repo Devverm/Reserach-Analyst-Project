@@ -1,348 +1,194 @@
 import ChatWindow from "../components/ChatWindow";
 
-
 function Assistant() {
+  const popularSearches = [
+    "Remote Python developer jobs",
+    "Data scientist jobs in Bengaluru",
+    "AI engineer with ML experience",
+  ];
+
   return (
     <div
       className="assistant-page"
       style={{
         minHeight: "100vh",
-        background:
-          "radial-gradient(circle at 85% 5%, rgba(124, 58, 237, 0.08), transparent 28%), radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.06), transparent 25%), #f7f8fc",
-        padding: "46px 28px 80px",
-        color: "#111827",
+        background: "#f8f7f5",
+        color: "#17141a",
         fontFamily:
           "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        padding: "55px 28px 80px",
+        boxSizing: "border-box",
       }}
     >
-
       <div
         style={{
           width: "100%",
-          maxWidth: "1050px",
+          maxWidth: "1120px",
           margin: "0 auto",
         }}
       >
-
-        {/* ====================================================
-            HERO
-        ==================================================== */}
+        {/* =====================================================
+            MAIN AI ASSISTANT CARD
+        ===================================================== */}
 
         <div
           style={{
-            marginBottom: "30px",
+            background: "#ffffff",
+            border: "1px solid #e8e3e7",
+            borderRadius: "22px",
+            overflow: "hidden",
+            boxShadow: "0 8px 30px rgba(55, 35, 55, 0.04)",
           }}
         >
+          {/* HEADER */}
 
           <div
             style={{
-              display: "inline-flex",
+              padding: "30px 34px 25px",
+              borderBottom: "1px solid #eee9ed",
+              display: "flex",
               alignItems: "center",
-              gap: "7px",
-              padding: "8px 13px",
-              borderRadius: "999px",
-              background:
-                "linear-gradient(135deg, #ede9fe, #f5f3ff)",
-              border: "1px solid #ddd6fe",
-              color: "#6d28d9",
-              fontSize: "12px",
-              fontWeight: "800",
-              letterSpacing: "0.3px",
-              marginBottom: "16px",
-            }}
-          >
-            ✦ AI CAREER ASSISTANT
-          </div>
-
-
-          <h1
-            style={{
-              margin: 0,
-              fontSize: "clamp(38px, 5vw, 58px)",
-              lineHeight: "1.04",
-              letterSpacing: "-2.5px",
-              fontWeight: "850",
-              color: "#111827",
-            }}
-          >
-            Your AI-powered
-            <span
-              style={{
-                display: "block",
-                background:
-                  "linear-gradient(90deg, #4f46e5, #7c3aed, #9333ea)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              job assistant.
-            </span>
-          </h1>
-
-
-          <p
-            style={{
-              maxWidth: "650px",
-              margin: "17px 0 0",
-              color: "#6b7280",
-              fontSize: "16px",
-              lineHeight: "1.65",
-            }}
-          >
-            Tell me what kind of opportunity you're
-            looking for. I'll understand your request
-            and find the most relevant jobs for you.
-          </p>
-
-        </div>
-
-
-        {/* ====================================================
-            AI CAPABILITY CARDS
-        ==================================================== */}
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(3, minmax(0, 1fr))",
-            gap: "10px",
-            marginBottom: "18px",
-          }}
-        >
-
-          <div
-            style={{
-              background: "#ffffff",
-              border: "1px solid #e7e9ef",
-              borderRadius: "13px",
-              padding: "14px 16px",
+              gap: "14px",
             }}
           >
             <div
               style={{
-                fontSize: "18px",
-                marginBottom: "7px",
+                width: "44px",
+                height: "44px",
+                borderRadius: "13px",
+                background: "#f1e8f0",
+                color: "#6b3f63",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "19px",
+                flexShrink: 0,
               }}
             >
               ✦
             </div>
 
-            <div
-              style={{
-                fontSize: "12px",
-                fontWeight: "800",
-                color: "#374151",
-              }}
-            >
-              Natural Language
-            </div>
+            <div>
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: "23px",
+                  lineHeight: "1.2",
+                  fontWeight: "800",
+                  letterSpacing: "-0.5px",
+                  color: "#17141a",
+                }}
+              >
+                AI Job Assistant
+              </h1>
 
-            <div
-              style={{
-                marginTop: "3px",
-                fontSize: "11px",
-                color: "#9ca3af",
-              }}
-            >
-              Search naturally
-            </div>
-          </div>
-
-
-          <div
-            style={{
-              background: "#ffffff",
-              border: "1px solid #e7e9ef",
-              borderRadius: "13px",
-              padding: "14px 16px",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "18px",
-                marginBottom: "7px",
-              }}
-            >
-              🧠
-            </div>
-
-            <div
-              style={{
-                fontSize: "12px",
-                fontWeight: "800",
-                color: "#374151",
-              }}
-            >
-              Semantic Matching
-            </div>
-
-            <div
-              style={{
-                marginTop: "3px",
-                fontSize: "11px",
-                color: "#9ca3af",
-              }}
-            >
-              AI understands intent
+              <p
+                style={{
+                  margin: "5px 0 0",
+                  fontSize: "13px",
+                  lineHeight: "1.5",
+                  color: "#77717a",
+                }}
+              >
+                Describe the opportunity you're looking for and let AI
+                find relevant jobs.
+              </p>
             </div>
           </div>
 
-
-          <div
-            style={{
-              background: "#ffffff",
-              border: "1px solid #e7e9ef",
-              borderRadius: "13px",
-              padding: "14px 16px",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "18px",
-                marginBottom: "7px",
-              }}
-            >
-              🎯
-            </div>
-
-            <div
-              style={{
-                fontSize: "12px",
-                fontWeight: "800",
-                color: "#374151",
-              }}
-            >
-              Relevant Jobs
-            </div>
-
-            <div
-              style={{
-                marginTop: "3px",
-                fontSize: "11px",
-                color: "#9ca3af",
-              }}
-            >
-              Get ranked matches
-            </div>
-          </div>
-
-        </div>
-
-
-        {/* ====================================================
-            CHAT WINDOW
-        ==================================================== */}
-
-        <div
-          style={{
-            background: "#ffffff",
-            border: "1px solid #e5e7eb",
-            borderRadius: "20px",
-            padding: "8px",
-            boxShadow:
-              "0 18px 45px rgba(15, 23, 42, 0.07)",
-          }}
-        >
+          {/* SEARCH + RESULTS */}
 
           <ChatWindow />
-
         </div>
 
-
-        {/* ====================================================
-            EXAMPLE QUERIES
-        ==================================================== */}
+        {/* =====================================================
+            POPULAR SEARCHES
+        ===================================================== */}
 
         <div
           style={{
-            marginTop: "17px",
-            textAlign: "center",
+            marginTop: "30px",
           }}
         >
-
           <div
             style={{
-              color: "#9ca3af",
-              fontSize: "11px",
-              marginBottom: "9px",
-              fontWeight: "600",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              marginBottom: "13px",
             }}
           >
-            Try asking
-          </div>
+            <div
+              style={{
+                width: "28px",
+                height: "1px",
+                background: "#b8b0b8",
+              }}
+            />
 
+            <span
+              style={{
+                color: "#625b63",
+                fontSize: "12px",
+                fontWeight: "700",
+              }}
+            >
+              Popular searches
+            </span>
+          </div>
 
           <div
             style={{
               display: "flex",
               flexWrap: "wrap",
-              justifyContent: "center",
-              gap: "7px",
+              gap: "10px",
             }}
           >
-
-            {[
-              "Remote Python developer jobs",
-              "Data scientist jobs in Bengaluru",
-              "AI engineer with ML experience",
-            ].map((text) => (
-
-              <span
-                key={text}
+            {popularSearches.map((search) => (
+              <div
+                key={search}
                 style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  padding: "10px 15px",
                   background: "#ffffff",
-                  border: "1px solid #e5e7eb",
-                  color: "#6b7280",
-                  padding: "7px 11px",
+                  border: "1px solid #e4dfe5",
                   borderRadius: "999px",
-                  fontSize: "10px",
+                  color: "#625b63",
+                  fontSize: "11px",
+                  fontWeight: "500",
                 }}
               >
-                {text}
-              </span>
+                <span
+                  style={{
+                    color: "#6b3f63",
+                    fontSize: "12px",
+                  }}
+                >
+                  ↗
+                </span>
 
+                {search}
+              </div>
             ))}
-
           </div>
-
         </div>
-
       </div>
 
-
-      {/* ======================================================
-          RESPONSIVE STYLES
-      ====================================================== */}
+      {/* =====================================================
+          RESPONSIVE
+      ===================================================== */}
 
       <style>{`
-
-        @media (max-width: 750px) {
-
+        @media (max-width: 700px) {
           .assistant-page {
-            padding:
-              30px
-              15px
-              60px !important;
+            padding: 25px 14px 60px !important;
           }
-
-          .assistant-page > div {
-            max-width: 100% !important;
-          }
-
-          .assistant-page
-          > div
-          > div:nth-child(2) {
-            grid-template-columns: 1fr !important;
-          }
-
         }
-
       `}</style>
-
     </div>
   );
 }
-
 
 export default Assistant;

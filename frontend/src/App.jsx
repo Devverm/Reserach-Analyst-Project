@@ -5,20 +5,12 @@ import Assistant from "./pages/Assistant";
 import Recommendations from "./pages/Recommendations";
 import ResumeUpload from "./components/ResumeUpload";
 
-
 function App() {
   const [page, setPage] = useState("jobs");
-
   const [profileOpen, setProfileOpen] = useState(false);
-
   const [modal, setModal] = useState(null);
 
   const profileRef = useRef(null);
-
-
-  // ============================================================
-  // CLOSE PROFILE DROPDOWN WHEN CLICKING OUTSIDE
-  // ============================================================
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -30,10 +22,7 @@ function App() {
       }
     }
 
-    document.addEventListener(
-      "mousedown",
-      handleClickOutside
-    );
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener(
@@ -42,11 +31,6 @@ function App() {
       );
     };
   }, []);
-
-
-  // ============================================================
-  // NAVIGATION ITEMS
-  // ============================================================
 
   const navItems = [
     {
@@ -62,7 +46,7 @@ function App() {
     {
       id: "recommendations",
       label: "Recommendations",
-      icon: "♢",
+      icon: "◇",
     },
     {
       id: "resume",
@@ -71,419 +55,148 @@ function App() {
     },
   ];
 
-
-  // ============================================================
-  // NAVIGATION
-  // ============================================================
-
   const navigateTo = (pageName) => {
     setPage(pageName);
     setProfileOpen(false);
     setModal(null);
   };
 
-
-  // ============================================================
-  // OPEN PROFILE MODAL
-  // ============================================================
-
   const openModal = (type) => {
     setProfileOpen(false);
     setModal(type);
   };
 
-
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#f7f8fc",
-      }}
-    >
+    <div className="app-shell">
 
       {/* =====================================================
-          NAVIGATION
+          TOP NAVIGATION
       ===================================================== */}
 
-      <nav
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 1000,
-          background: "rgba(255, 255, 255, 0.94)",
-          backdropFilter: "blur(18px)",
-          WebkitBackdropFilter: "blur(18px)",
-          borderBottom: "1px solid #e8eaf0",
-          padding: "0 32px",
-        }}
-      >
+      <nav className="top-nav">
+        <div className="nav-container">
 
-        <div
-          style={{
-            maxWidth: "1250px",
-            height: "76px",
-            margin: "0 auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "30px",
-          }}
-        >
-
-          {/* =================================================
-              LOGO
-          ================================================= */}
+          {/* LOGO */}
 
           <button
+            className="brand"
             onClick={() => navigateTo("jobs")}
-            style={{
-              border: "none",
-              background: "transparent",
-              padding: 0,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              flexShrink: 0,
-            }}
           >
-
-            <div
-              style={{
-                width: "38px",
-                height: "38px",
-                borderRadius: "11px",
-                background:
-                  "linear-gradient(135deg, #4f46e5, #8b5cf6)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-                fontSize: "19px",
-                fontWeight: "800",
-                boxShadow:
-                  "0 6px 15px rgba(79, 70, 229, 0.22)",
-              }}
-            >
-              ✦
+            <div className="brand-mark">
+              <span>✦</span>
             </div>
 
-
-            <div
-              style={{
-                textAlign: "left",
-                lineHeight: "1.05",
-              }}
-            >
-
-              <div
-                style={{
-                  fontSize: "17px",
-                  fontWeight: "800",
-                  color: "#111827",
-                  letterSpacing: "-0.5px",
-                }}
-              >
+            <div className="brand-text">
+              <div className="brand-name">
                 JobMatch
               </div>
 
-              <div
-                style={{
-                  fontSize: "10px",
-                  fontWeight: "700",
-                  color: "#7c3aed",
-                  letterSpacing: "0.8px",
-                }}
-              >
+              <div className="brand-subtitle">
                 AI POWERED
               </div>
-
             </div>
-
           </button>
 
 
-          {/* =================================================
-              NAVIGATION LINKS
-          ================================================= */}
+          {/* NAVIGATION */}
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              flex: 1,
-              justifyContent: "center",
-            }}
-          >
-
+          <div className="main-nav">
             {navItems.map((item) => {
-
               const active = page === item.id;
 
               return (
                 <button
                   key={item.id}
                   onClick={() => navigateTo(item.id)}
-                  style={{
-                    position: "relative",
-                    border: "none",
-                    background:
-                      active
-                        ? "#f1f3ff"
-                        : "transparent",
-                    color:
-                      active
-                        ? "#4f46e5"
-                        : "#6b7280",
-                    padding: "10px 14px",
-                    borderRadius: "9px",
-                    cursor: "pointer",
-                    fontSize: "13px",
-                    fontWeight:
-                      active
-                        ? "700"
-                        : "600",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "7px",
-                    transition:
-                      "all 0.2s ease",
-                  }}
+                  className={`nav-item ${
+                    active ? "nav-item-active" : ""
+                  }`}
                 >
-
-                  <span
-                    style={{
-                      fontSize: "15px",
-                    }}
-                  >
+                  <span className="nav-icon">
                     {item.icon}
                   </span>
 
-                  {item.label}
-
-                  {active && (
-                    <span
-                      style={{
-                        position: "absolute",
-                        bottom: "-17px",
-                        left: "50%",
-                        transform:
-                          "translateX(-50%)",
-                        width: "24px",
-                        height: "3px",
-                        borderRadius: "999px",
-                        background:
-                          "linear-gradient(90deg, #4f46e5, #8b5cf6)",
-                      }}
-                    />
-                  )}
-
+                  <span>{item.label}</span>
                 </button>
               );
             })}
-
           </div>
 
 
-          {/* =================================================
-              RIGHT SIDE
-          ================================================= */}
+          {/* RIGHT SIDE */}
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              flexShrink: 0,
-            }}
-          >
-
-            {/* NOTIFICATION */}
+          <div className="nav-actions">
 
             <button
-              onClick={() => openModal("notifications")}
-              style={{
-                width: "38px",
-                height: "38px",
-                borderRadius: "10px",
-                border:
-                  "1px solid #e5e7eb",
-                background: "#ffffff",
-                color: "#6b7280",
-                cursor: "pointer",
-                fontSize: "15px",
-              }}
+              className="icon-button"
+              onClick={() =>
+                openModal("notifications")
+              }
               title="Notifications"
             >
               ♧
             </button>
 
 
-            {/* =================================================
-                PROFILE BUTTON
-            ================================================= */}
-
             <div
+              className="profile-wrapper"
               ref={profileRef}
-              style={{
-                position: "relative",
-              }}
             >
 
               <button
+                className={`profile-button ${
+                  profileOpen
+                    ? "profile-button-active"
+                    : ""
+                }`}
                 onClick={() =>
                   setProfileOpen(
                     (previous) => !previous
                   )
                 }
-                style={{
-                  height: "38px",
-                  padding: "0 11px",
-                  borderRadius: "10px",
-                  border:
-                    profileOpen
-                      ? "1px solid #c4b5fd"
-                      : "1px solid #e5e7eb",
-                  background:
-                    profileOpen
-                      ? "#faf9ff"
-                      : "#ffffff",
-                  color: "#374151",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  fontSize: "12px",
-                  fontWeight: "600",
-                }}
               >
 
-                <span
-                  style={{
-                    width: "25px",
-                    height: "25px",
-                    borderRadius: "50%",
-                    background:
-                      "linear-gradient(135deg, #ddd6fe, #c7d2fe)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#4f46e5",
-                    fontWeight: "800",
-                    fontSize: "10px",
-                  }}
-                >
+                <span className="avatar">
                   AI
                 </span>
 
-                Profile
+                <span className="profile-label">
+                  Profile
+                </span>
 
-                <span
-                  style={{
-                    color: "#9ca3af",
-                    fontSize: "10px",
-                  }}
-                >
-                  {profileOpen ? "▴" : "▾"}
+                <span className="profile-arrow">
+                  {profileOpen ? "⌃" : "⌄"}
                 </span>
 
               </button>
 
 
-              {/* =================================================
-                  PROFILE DROPDOWN
-              ================================================= */}
+              {/* PROFILE DROPDOWN */}
 
               {profileOpen && (
+                <div className="profile-dropdown">
 
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "48px",
-                    right: 0,
-                    width: "255px",
-                    background: "#ffffff",
-                    border:
-                      "1px solid #e8eaf0",
-                    borderRadius: "16px",
-                    padding: "8px",
-                    boxShadow:
-                      "0 20px 45px rgba(15, 23, 42, 0.12)",
-                    zIndex: 2000,
-                  }}
-                >
+                  <div className="profile-header">
 
-                  {/* PROFILE HEADER */}
+                    <div className="large-avatar">
+                      AI
+                    </div>
 
-                  <div
-                    style={{
-                      padding: "13px 12px",
-                      borderBottom:
-                        "1px solid #f0f1f5",
-                      marginBottom: "6px",
-                    }}
-                  >
-
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                      }}
-                    >
-
-                      <div
-                        style={{
-                          width: "38px",
-                          height: "38px",
-                          borderRadius: "12px",
-                          background:
-                            "linear-gradient(135deg, #4f46e5, #8b5cf6)",
-                          color: "#ffffff",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontWeight: "800",
-                          fontSize: "13px",
-                        }}
-                      >
-                        AI
+                    <div>
+                      <div className="profile-title">
+                        Job Seeker
                       </div>
 
-                      <div>
-
-                        <div
-                          style={{
-                            color: "#111827",
-                            fontSize: "13px",
-                            fontWeight: "800",
-                          }}
-                        >
-                          Job Seeker
-                        </div>
-
-                        <div
-                          style={{
-                            color: "#9ca3af",
-                            fontSize: "10px",
-                            marginTop: "2px",
-                          }}
-                        >
-                          AI-powered profile
-                        </div>
-
+                      <div className="profile-description">
+                        AI-powered profile
                       </div>
-
                     </div>
 
                   </div>
 
 
-                  {/* MY PROFILE */}
-
                   <ProfileMenuItem
-                    icon="👤"
+                    icon="◉"
                     title="My Profile"
                     subtitle="View your profile"
                     onClick={() =>
@@ -492,10 +205,8 @@ function App() {
                   />
 
 
-                  {/* JOB PREFERENCES */}
-
                   <ProfileMenuItem
-                    icon="🎯"
+                    icon="◎"
                     title="Job Preferences"
                     subtitle="Role, location & experience"
                     onClick={() =>
@@ -503,8 +214,6 @@ function App() {
                     }
                   />
 
-
-                  {/* MY SKILLS */}
 
                   <ProfileMenuItem
                     icon="✦"
@@ -516,10 +225,8 @@ function App() {
                   />
 
 
-                  {/* RESUME */}
-
                   <ProfileMenuItem
-                    icon="📄"
+                    icon="▤"
                     title="Resume"
                     subtitle="Upload or analyze resume"
                     onClick={() =>
@@ -528,16 +235,8 @@ function App() {
                   />
 
 
-                  <div
-                    style={{
-                      height: "1px",
-                      background: "#f0f1f5",
-                      margin: "6px 4px",
-                    }}
-                  />
+                  <div className="menu-divider" />
 
-
-                  {/* SETTINGS */}
 
                   <ProfileMenuItem
                     icon="⚙"
@@ -549,7 +248,6 @@ function App() {
                   />
 
                 </div>
-
               )}
 
             </div>
@@ -557,25 +255,32 @@ function App() {
           </div>
 
         </div>
-
       </nav>
 
 
       {/* =====================================================
-          PAGE CONTENT
+          MAIN CONTENT
       ===================================================== */}
 
-      {page === "jobs" && <Jobs />}
+      <main className="page-container">
 
-      {page === "assistant" && <Assistant />}
+        {page === "jobs" && (
+          <Jobs />
+        )}
 
-      {page === "recommendations" && (
-        <Recommendations />
-      )}
+        {page === "assistant" && (
+          <Assistant />
+        )}
 
-      {page === "resume" && (
-        <ResumeUpload />
-      )}
+        {page === "recommendations" && (
+          <Recommendations />
+        )}
+
+        {page === "resume" && (
+          <ResumeUpload />
+        )}
+
+      </main>
 
 
       {/* =====================================================
@@ -590,14 +295,543 @@ function App() {
         />
       )}
 
+
+      {/* =====================================================
+          GLOBAL STYLES
+      ===================================================== */}
+
+      <style>{`
+
+        * {
+          box-sizing: border-box;
+        }
+
+        body {
+          margin: 0;
+          font-family:
+            Inter,
+            ui-sans-serif,
+            system-ui,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            sans-serif;
+
+          background: #f8f7f3;
+          color: #171321;
+        }
+
+
+        button {
+          font-family: inherit;
+        }
+
+
+        /* =====================================================
+           APP SHELL
+        ===================================================== */
+
+        .app-shell {
+          min-height: 100vh;
+          background:
+            radial-gradient(
+              circle at 80% 0%,
+              rgba(105, 72, 103, 0.055),
+              transparent 30%
+            ),
+            #f8f7f3;
+        }
+
+
+        /* =====================================================
+           NAVIGATION
+        ===================================================== */
+
+        .top-nav {
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+
+          background:
+            rgba(248, 247, 243, 0.92);
+
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+
+          border-bottom:
+            1px solid rgba(38, 30, 45, 0.08);
+        }
+
+
+        .nav-container {
+          width: min(1240px, calc(100% - 48px));
+          height: 78px;
+          margin: 0 auto;
+
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          gap: 30px;
+        }
+
+
+        /* =====================================================
+           BRAND
+        ===================================================== */
+
+        .brand {
+          border: none;
+          background: transparent;
+          padding: 0;
+
+          display: flex;
+          align-items: center;
+          gap: 11px;
+
+          cursor: pointer;
+
+          flex-shrink: 0;
+        }
+
+
+        .brand-mark {
+          width: 40px;
+          height: 40px;
+
+          border-radius: 12px;
+
+          background:
+            linear-gradient(
+              135deg,
+              #39223d,
+              #74466f
+            );
+
+          color: white;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          font-size: 18px;
+
+          box-shadow:
+            0 8px 22px
+            rgba(72, 40, 70, 0.18);
+        }
+
+
+        .brand-name {
+          color: #171321;
+
+          font-size: 17px;
+          font-weight: 800;
+
+          letter-spacing: -0.6px;
+
+          line-height: 1;
+        }
+
+
+        .brand-subtitle {
+          margin-top: 5px;
+
+          color: #79506f;
+
+          font-size: 8px;
+          font-weight: 800;
+
+          letter-spacing: 1.2px;
+        }
+
+
+        /* =====================================================
+           MAIN NAV
+        ===================================================== */
+
+        .main-nav {
+          display: flex;
+          align-items: center;
+
+          gap: 5px;
+
+          flex: 1;
+          justify-content: center;
+        }
+
+
+        .nav-item {
+          position: relative;
+
+          border: none;
+          background: transparent;
+
+          color: #716b76;
+
+          padding: 10px 15px;
+
+          border-radius: 999px;
+
+          cursor: pointer;
+
+          display: flex;
+          align-items: center;
+          gap: 7px;
+
+          font-size: 13px;
+          font-weight: 650;
+
+          transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
+        }
+
+
+        .nav-item:hover {
+          background: #eee9ed;
+          color: #352336;
+        }
+
+
+        .nav-item-active {
+          background: #eee6ec;
+          color: #4b2949;
+        }
+
+
+        .nav-item-active:hover {
+          background: #eee6ec;
+        }
+
+
+        .nav-icon {
+          font-size: 15px;
+          line-height: 1;
+        }
+
+
+        /* =====================================================
+           RIGHT ACTIONS
+        ===================================================== */
+
+        .nav-actions {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+
+          flex-shrink: 0;
+        }
+
+
+        .icon-button {
+          width: 39px;
+          height: 39px;
+
+          border-radius: 50%;
+
+          border:
+            1px solid #ddd7dd;
+
+          background: #ffffff;
+
+          color: #625a64;
+
+          cursor: pointer;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          font-size: 15px;
+
+          transition:
+            background 0.2s ease,
+            border-color 0.2s ease;
+        }
+
+
+        .icon-button:hover {
+          background: #f2edf1;
+          border-color: #cfc5cf;
+        }
+
+
+        .profile-wrapper {
+          position: relative;
+        }
+
+
+        .profile-button {
+          height: 40px;
+
+          padding: 4px 11px 4px 5px;
+
+          border-radius: 999px;
+
+          border:
+            1px solid #ddd7dd;
+
+          background: #ffffff;
+
+          color: #352c37;
+
+          cursor: pointer;
+
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          font-size: 12px;
+          font-weight: 700;
+
+          transition: all 0.2s ease;
+        }
+
+
+        .profile-button:hover,
+        .profile-button-active {
+          border-color: #bdaabb;
+          background: #fdfafd;
+        }
+
+
+        .avatar {
+          width: 29px;
+          height: 29px;
+
+          border-radius: 50%;
+
+          background:
+            linear-gradient(
+              135deg,
+              #eadfe9,
+              #d7c3d5
+            );
+
+          color: #5a3555;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          font-size: 9px;
+          font-weight: 800;
+        }
+
+
+        .profile-arrow {
+          color: #958d96;
+          font-size: 11px;
+        }
+
+
+        /* =====================================================
+           PROFILE DROPDOWN
+        ===================================================== */
+
+        .profile-dropdown {
+          position: absolute;
+
+          top: 51px;
+          right: 0;
+
+          width: 265px;
+
+          padding: 8px;
+
+          background: #ffffff;
+
+          border:
+            1px solid #e6e0e5;
+
+          border-radius: 18px;
+
+          box-shadow:
+            0 25px 60px
+            rgba(39, 28, 40, 0.15);
+
+          animation:
+            dropdownIn 0.18s ease-out;
+        }
+
+
+        @keyframes dropdownIn {
+          from {
+            opacity: 0;
+            transform: translateY(-5px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+
+        .profile-header {
+          padding: 13px 12px;
+
+          display: flex;
+          align-items: center;
+
+          gap: 11px;
+
+          border-bottom:
+            1px solid #f0ecef;
+
+          margin-bottom: 6px;
+        }
+
+
+        .large-avatar {
+          width: 39px;
+          height: 39px;
+
+          border-radius: 12px;
+
+          background:
+            linear-gradient(
+              135deg,
+              #39223d,
+              #74466f
+            );
+
+          color: white;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          font-size: 11px;
+          font-weight: 800;
+        }
+
+
+        .profile-title {
+          color: #27202a;
+
+          font-size: 13px;
+          font-weight: 800;
+        }
+
+
+        .profile-description {
+          margin-top: 3px;
+
+          color: #99919a;
+
+          font-size: 10px;
+        }
+
+
+        .menu-divider {
+          height: 1px;
+
+          background: #f0ecef;
+
+          margin: 6px 4px;
+        }
+
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
+        .page-container {
+          min-height: calc(100vh - 78px);
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+          .nav-container {
+            width: min(
+              100% - 28px,
+              1240px
+            );
+
+            gap: 12px;
+          }
+
+
+          .main-nav {
+            justify-content: flex-end;
+          }
+
+
+          .nav-item {
+            padding: 9px 10px;
+          }
+
+
+          .nav-item span:last-child {
+            display: none;
+          }
+
+
+          .profile-label {
+            display: none;
+          }
+
+        }
+
+
+        @media (max-width: 650px) {
+
+          .nav-container {
+            height: 68px;
+          }
+
+
+          .brand-text {
+            display: none;
+          }
+
+
+          .nav-item {
+            width: 38px;
+            height: 38px;
+
+            justify-content: center;
+
+            padding: 0;
+          }
+
+
+          .icon-button {
+            display: none;
+          }
+
+
+          .profile-button {
+            width: 40px;
+            padding: 4px;
+            justify-content: center;
+          }
+
+
+          .profile-arrow {
+            display: none;
+          }
+
+        }
+
+      `}</style>
+
     </div>
   );
 }
 
 
-// ============================================================
-// PROFILE MENU ITEM
-// ============================================================
+/* ============================================================
+   PROFILE MENU ITEM
+============================================================ */
 
 function ProfileMenuItem({
   icon,
@@ -608,11 +842,12 @@ function ProfileMenuItem({
   return (
     <button
       onClick={onClick}
+      className="profile-menu-item"
       style={{
         width: "100%",
         border: "none",
         background: "transparent",
-        borderRadius: "10px",
+        borderRadius: "11px",
         padding: "9px 8px",
         display: "flex",
         alignItems: "center",
@@ -622,7 +857,7 @@ function ProfileMenuItem({
       }}
       onMouseEnter={(event) => {
         event.currentTarget.style.background =
-          "#f8f7ff";
+          "#f7f3f6";
       }}
       onMouseLeave={(event) => {
         event.currentTarget.style.background =
@@ -632,10 +867,11 @@ function ProfileMenuItem({
 
       <span
         style={{
-          width: "32px",
-          height: "32px",
-          borderRadius: "9px",
-          background: "#f5f3ff",
+          width: "33px",
+          height: "33px",
+          borderRadius: "10px",
+          background: "#f3edf2",
+          color: "#684361",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -657,9 +893,9 @@ function ProfileMenuItem({
 
         <span
           style={{
-            color: "#374151",
+            color: "#342c36",
             fontSize: "12px",
-            fontWeight: "700",
+            fontWeight: "750",
           }}
         >
           {title}
@@ -667,7 +903,7 @@ function ProfileMenuItem({
 
         <span
           style={{
-            color: "#9ca3af",
+            color: "#a19aa2",
             fontSize: "9px",
           }}
         >
@@ -681,9 +917,9 @@ function ProfileMenuItem({
 }
 
 
-// ============================================================
-// PROFILE MODAL
-// ============================================================
+/* ============================================================
+   PROFILE MODAL
+============================================================ */
 
 function ProfileModal({
   type,
@@ -694,10 +930,11 @@ function ProfileModal({
   const content = {
 
     profile: {
-      icon: "👤",
+      icon: "◉",
       title: "My Profile",
       description:
         "Your AI-powered job seeker profile.",
+
       body: (
         <>
           <InfoRow
@@ -725,10 +962,11 @@ function ProfileModal({
 
 
     preferences: {
-      icon: "🎯",
+      icon: "◎",
       title: "Job Preferences",
       description:
         "Your preferred job search criteria.",
+
       body: (
         <>
           <InfoRow
@@ -760,6 +998,7 @@ function ProfileModal({
       title: "My Skills",
       description:
         "Skills currently used by the AI matching system.",
+
       body: (
         <div
           style={{
@@ -783,12 +1022,12 @@ function ProfileModal({
             <span
               key={skill}
               style={{
-                background: "#f1efff",
-                color: "#5b4de8",
+                background: "#f1eaf0",
+                color: "#5b3554",
                 padding: "8px 12px",
                 borderRadius: "999px",
                 fontSize: "12px",
-                fontWeight: "600",
+                fontWeight: "650",
               }}
             >
               {skill}
@@ -804,6 +1043,7 @@ function ProfileModal({
       title: "Settings",
       description:
         "Application preferences.",
+
       body: (
         <>
           <SettingRow
@@ -830,27 +1070,29 @@ function ProfileModal({
       title: "Notifications",
       description:
         "Your JobMatch notifications.",
+
       body: (
         <div
           style={{
             textAlign: "center",
-            padding: "25px 10px",
-            color: "#9ca3af",
+            padding: "30px 10px",
+            color: "#99919a",
           }}
         >
+
           <div
             style={{
               fontSize: "32px",
               marginBottom: "10px",
             }}
           >
-            🔔
+            ♧
           </div>
 
           <div
             style={{
-              fontWeight: "700",
-              color: "#374151",
+              fontWeight: "750",
+              color: "#3b333d",
               marginBottom: "5px",
             }}
           >
@@ -864,6 +1106,7 @@ function ProfileModal({
           >
             You're all caught up.
           </div>
+
         </div>
       ),
     },
@@ -885,8 +1128,8 @@ function ProfileModal({
         position: "fixed",
         inset: 0,
         background:
-          "rgba(15, 23, 42, 0.35)",
-        backdropFilter: "blur(4px)",
+          "rgba(28, 20, 29, 0.42)",
+        backdropFilter: "blur(6px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -901,11 +1144,11 @@ function ProfileModal({
         }
         style={{
           width: "100%",
-          maxWidth: "520px",
+          maxWidth: "540px",
           background: "#ffffff",
           borderRadius: "22px",
           boxShadow:
-            "0 30px 80px rgba(15,23,42,0.2)",
+            "0 35px 90px rgba(29, 20, 30, 0.22)",
           overflow: "hidden",
         }}
       >
@@ -919,7 +1162,7 @@ function ProfileModal({
             alignItems: "center",
             justifyContent: "space-between",
             borderBottom:
-              "1px solid #eef0f5",
+              "1px solid #eee9ed",
           }}
         >
 
@@ -933,11 +1176,11 @@ function ProfileModal({
 
             <div
               style={{
-                width: "42px",
-                height: "42px",
+                width: "43px",
+                height: "43px",
                 borderRadius: "13px",
                 background:
-                  "linear-gradient(135deg, #4f46e5, #8b5cf6)",
+                  "linear-gradient(135deg, #39223d, #74466f)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -953,8 +1196,9 @@ function ProfileModal({
               <h2
                 style={{
                   margin: 0,
-                  color: "#111827",
+                  color: "#211a23",
                   fontSize: "20px",
+                  letterSpacing: "-0.5px",
                 }}
               >
                 {selected.title}
@@ -962,9 +1206,8 @@ function ProfileModal({
 
               <p
                 style={{
-                  margin:
-                    "4px 0 0",
-                  color: "#9ca3af",
+                  margin: "5px 0 0",
+                  color: "#99919a",
                   fontSize: "12px",
                 }}
               >
@@ -981,13 +1224,13 @@ function ProfileModal({
             style={{
               width: "34px",
               height: "34px",
-              borderRadius: "10px",
+              borderRadius: "50%",
               border:
-                "1px solid #e5e7eb",
+                "1px solid #e5dfe5",
               background: "#ffffff",
-              color: "#6b7280",
+              color: "#6d6570",
               cursor: "pointer",
-              fontSize: "16px",
+              fontSize: "17px",
             }}
           >
             ×
@@ -1013,7 +1256,7 @@ function ProfileModal({
           style={{
             padding: "16px 28px",
             borderTop:
-              "1px solid #eef0f5",
+              "1px solid #eee9ed",
             display: "flex",
             justifyContent: "flex-end",
             gap: "10px",
@@ -1024,13 +1267,16 @@ function ProfileModal({
             <button
               onClick={() => {
                 onClose();
-                navigateTo("recommendations");
+                navigateTo(
+                  "recommendations"
+                );
               }}
               style={primaryButtonStyle}
             >
               View Recommendations →
             </button>
           )}
+
 
           {type === "preferences" && (
             <button
@@ -1044,11 +1290,14 @@ function ProfileModal({
             </button>
           )}
 
+
           {type === "skills" && (
             <button
               onClick={() => {
                 onClose();
-                navigateTo("recommendations");
+                navigateTo(
+                  "recommendations"
+                );
               }}
               style={primaryButtonStyle}
             >
@@ -1056,16 +1305,9 @@ function ProfileModal({
             </button>
           )}
 
-          {type === "settings" && (
-            <button
-              onClick={onClose}
-              style={primaryButtonStyle}
-            >
-              Done
-            </button>
-          )}
 
-          {type === "notifications" && (
+          {(type === "settings" ||
+            type === "notifications") && (
             <button
               onClick={onClose}
               style={primaryButtonStyle}
@@ -1083,9 +1325,9 @@ function ProfileModal({
 }
 
 
-// ============================================================
-// INFO ROW
-// ============================================================
+/* ============================================================
+   INFO ROW
+============================================================ */
 
 function InfoRow({ label, value }) {
   return (
@@ -1093,7 +1335,7 @@ function InfoRow({ label, value }) {
       style={{
         padding: "14px 0",
         borderBottom:
-          "1px solid #f0f1f5",
+          "1px solid #f0ecef",
         display: "flex",
         justifyContent: "space-between",
         gap: "20px",
@@ -1102,7 +1344,7 @@ function InfoRow({ label, value }) {
 
       <span
         style={{
-          color: "#9ca3af",
+          color: "#9b939c",
           fontSize: "12px",
           fontWeight: "600",
         }}
@@ -1112,9 +1354,9 @@ function InfoRow({ label, value }) {
 
       <span
         style={{
-          color: "#111827",
+          color: "#211a23",
           fontSize: "13px",
-          fontWeight: "700",
+          fontWeight: "750",
           textAlign: "right",
         }}
       >
@@ -1126,9 +1368,9 @@ function InfoRow({ label, value }) {
 }
 
 
-// ============================================================
-// SETTINGS ROW
-// ============================================================
+/* ============================================================
+   SETTINGS ROW
+============================================================ */
 
 function SettingRow({
   title,
@@ -1139,7 +1381,7 @@ function SettingRow({
       style={{
         padding: "15px 0",
         borderBottom:
-          "1px solid #f0f1f5",
+          "1px solid #f0ecef",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -1151,7 +1393,7 @@ function SettingRow({
 
         <div
           style={{
-            color: "#374151",
+            color: "#342c36",
             fontSize: "13px",
             fontWeight: "700",
             marginBottom: "4px",
@@ -1162,7 +1404,7 @@ function SettingRow({
 
         <div
           style={{
-            color: "#9ca3af",
+            color: "#9b939c",
             fontSize: "11px",
           }}
         >
@@ -1178,7 +1420,7 @@ function SettingRow({
           height: "21px",
           borderRadius: "999px",
           background:
-            "linear-gradient(90deg, #4f46e5, #8b5cf6)",
+            "linear-gradient(90deg, #4b2949, #805276)",
           padding: "2px",
           boxSizing: "border-box",
         }}
@@ -1201,20 +1443,28 @@ function SettingRow({
 }
 
 
-// ============================================================
-// PRIMARY BUTTON STYLE
-// ============================================================
+/* ============================================================
+   PRIMARY BUTTON
+============================================================ */
 
 const primaryButtonStyle = {
   border: "none",
-  borderRadius: "10px",
+  borderRadius: "999px",
+
   background:
-    "linear-gradient(135deg, #4f46e5, #7c3aed)",
+    "linear-gradient(135deg, #39223d, #74466f)",
+
   color: "#ffffff",
-  padding: "11px 17px",
+
+  padding: "11px 18px",
+
   fontSize: "12px",
-  fontWeight: "700",
+  fontWeight: "750",
+
   cursor: "pointer",
+
+  boxShadow:
+    "0 8px 18px rgba(72, 40, 70, 0.18)",
 };
 
 

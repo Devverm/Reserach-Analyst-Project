@@ -1,107 +1,67 @@
 import { useState } from "react";
-
 import RecommendationCard from "../components/RecommendationCard";
 
-
-const API_BASE_URL = "http://127.0.0.1:8000";
-
-
 function Recommendations() {
-  const [profile, setProfile] = useState(
+  const [query, setQuery] = useState(
     "Python Data Scientist with Machine Learning experience in Bengaluru"
   );
 
   const [jobs, setJobs] = useState([]);
-
   const [loading, setLoading] = useState(false);
 
-  const [error, setError] = useState("");
-
-
-  // ============================================================
-  // GET RECOMMENDATIONS
-  // ============================================================
-
   const getRecommendations = async () => {
-    if (!profile.trim()) {
-      setError(
-        "Please describe the type of job you are looking for."
-      );
-
-      return;
-    }
+    if (!query.trim()) return;
 
     setLoading(true);
-    setError("");
 
     try {
-      const params = new URLSearchParams();
-
-      params.append(
-        "profile",
-        profile
-      );
-
-      params.append(
-        "limit",
-        "10"
-      );
-
       const response = await fetch(
-        `${API_BASE_URL}/api/recommendations?${params.toString()}`
+        `http://127.0.0.1:8000/api/recommendations?query=${encodeURIComponent(
+          query
+        )}`
       );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-
-        throw new Error(
-          `Recommendation request failed: ${response.status} ${errorText}`
-        );
-      }
 
       const data = await response.json();
 
-      setJobs(
-        data.jobs || []
-      );
-
-    } catch (err) {
-      console.error(
-        "Recommendation error:",
-        err
-      );
-
-      setError(
-        err.message ||
-        "Failed to load recommendations."
-      );
-
+      if (Array.isArray(data)) {
+        setJobs(data);
+      } else if (Array.isArray(data.jobs)) {
+        setJobs(data.jobs);
+      } else if (Array.isArray(data.results)) {
+        setJobs(data.results);
+      } else {
+        setJobs([]);
+      }
+    } catch (error) {
+      console.error("Recommendation error:", error);
       setJobs([]);
-
     } finally {
       setLoading(false);
     }
   };
 
-
-  // ============================================================
-  // UI
-  // ============================================================
+  const popularSearches = [
+    "Python Data Scientist",
+    "Data Scientist Bengaluru",
+    "Remote AI Engineer",
+  ];
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        background:
-          "radial-gradient(circle at 85% 5%, rgba(124, 58, 237, 0.08), transparent 28%), radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.06), transparent 25%), #f7f8fc",
-        padding: "46px 28px 80px",
-        boxSizing: "border-box",
-        color: "#111827",
+
+        // SAME CREAMY BACKGROUND AS THE OTHER SECTIONS
+        background: "#f8f7f2",
+
+        color: "#17131a",
+
         fontFamily:
           "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+
+        padding: "42px 24px 80px",
       }}
     >
-
       <div
         style={{
           width: "100%",
@@ -109,451 +69,290 @@ function Recommendations() {
           margin: "0 auto",
         }}
       >
-
-        {/* ====================================================
-            HERO
-        ==================================================== */}
-
-        <div
-          style={{
-            marginBottom: "30px",
-          }}
-        >
-
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "7px",
-              padding: "8px 13px",
-              borderRadius: "999px",
-              background:
-                "linear-gradient(135deg, #ede9fe, #f5f3ff)",
-              border: "1px solid #ddd6fe",
-              color: "#6d28d9",
-              fontSize: "11px",
-              fontWeight: "800",
-              letterSpacing: "0.3px",
-              marginBottom: "16px",
-            }}
-          >
-            ✦ AI-POWERED RECOMMENDATIONS
-          </div>
-
-
-          <h1
-            style={{
-              margin: 0,
-              fontSize: "clamp(38px, 5vw, 58px)",
-              lineHeight: "1.04",
-              letterSpacing: "-2.5px",
-              fontWeight: "850",
-              color: "#111827",
-            }}
-          >
-            Jobs picked
-            <span
-              style={{
-                display: "block",
-                background:
-                  "linear-gradient(90deg, #4f46e5, #7c3aed, #9333ea)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              for you.
-            </span>
-          </h1>
-
-
-          <p
-            style={{
-              maxWidth: "650px",
-              margin: "17px 0 0",
-              color: "#6b7280",
-              fontSize: "16px",
-              lineHeight: "1.65",
-            }}
-          >
-            Tell us about your skills, experience and
-            preferred role. Our AI will find opportunities
-            that best match your profile.
-          </p>
-
-        </div>
-
-
-        {/* ====================================================
-            PROFILE INPUT CARD
-        ==================================================== */}
+        {/* =====================================================
+            PROFILE SEARCH CARD
+        ===================================================== */}
 
         <div
           style={{
             background: "#ffffff",
-            border: "1px solid #e7e9ef",
+            border: "1px solid #e5e1e0",
             borderRadius: "20px",
-            padding: "25px",
-            boxShadow:
-              "0 18px 45px rgba(15, 23, 42, 0.06)",
-            marginBottom: "32px",
+            padding: "26px",
+            boxShadow: "0 4px 18px rgba(40, 32, 35, 0.04)",
           }}
         >
-
-          {/* CARD HEADER */}
+          {/* HEADER */}
 
           <div
             style={{
               display: "flex",
-              alignItems: "flex-start",
-              gap: "13px",
-              marginBottom: "20px",
+              alignItems: "center",
+              gap: "12px",
+              paddingBottom: "18px",
+              borderBottom: "1px solid #eeeae8",
             }}
           >
-
             <div
               style={{
-                width: "40px",
-                height: "40px",
+                width: "38px",
+                height: "38px",
                 borderRadius: "11px",
-                background:
-                  "linear-gradient(135deg, #4f46e5, #7c3aed)",
+                background: "#684461",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "#ffffff",
-                fontSize: "18px",
-                flexShrink: 0,
-                boxShadow:
-                  "0 7px 18px rgba(99, 102, 241, 0.22)",
+                fontSize: "17px",
               }}
             >
               ✦
             </div>
 
-
             <div>
-
-              <h2
+              <h1
                 style={{
-                  margin: "0 0 4px",
-                  fontSize: "18px",
-                  fontWeight: "800",
-                  color: "#111827",
+                  margin: 0,
+                  fontSize: "20px",
+                  lineHeight: "1.2",
+                  fontWeight: "750",
+                  letterSpacing: "-0.4px",
+                  color: "#17131a",
                 }}
               >
                 Build your job profile
-              </h2>
+              </h1>
 
               <p
                 style={{
-                  margin: 0,
-                  color: "#9ca3af",
-                  fontSize: "12px",
+                  margin: "4px 0 0",
+                  fontSize: "11px",
+                  color: "#8a8388",
                 }}
               >
-                Describe the role, skills, experience or
-                location you're targeting.
+                Describe the role, skills, experience or location you're
+                targeting.
               </p>
-
             </div>
-
           </div>
 
+          {/* TEXT AREA */}
 
-          {/* PROFILE TEXTAREA */}
-
-          <textarea
-            value={profile}
-            onChange={(event) =>
-              setProfile(event.target.value)
-            }
-            placeholder="Example: Python Data Scientist with Machine Learning experience in Bengaluru"
-            rows={4}
+          <div
             style={{
-              width: "100%",
-              padding: "16px",
-              fontSize: "14px",
-              lineHeight: "1.6",
-              color: "#111827",
-              background: "#fafbff",
-              border: "1px solid #e2e5ee",
+              marginTop: "16px",
+              border: "1px solid #e7e3e1",
               borderRadius: "13px",
-              boxSizing: "border-box",
-              resize: "vertical",
-              outline: "none",
-              fontFamily:
-                "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              transition: "all 0.2s ease",
+              overflow: "hidden",
+              background: "#ffffff",
             }}
-            onFocus={(event) => {
-              event.target.style.border =
-                "1px solid #8b5cf6";
+          >
+            <textarea
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Describe the opportunity you're looking for..."
+              style={{
+                width: "100%",
+                minHeight: "125px",
+                boxSizing: "border-box",
+                border: "none",
+                outline: "none",
+                resize: "vertical",
+                padding: "16px",
+                fontFamily:
+                  "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontSize: "13px",
+                color: "#302a30",
+                background: "#ffffff",
+              }}
+            />
 
-              event.target.style.boxShadow =
-                "0 0 0 4px rgba(139, 92, 246, 0.08)";
+            {/* BOTTOM BAR */}
+
+            <div
+              style={{
+                borderTop: "1px solid #eeeae8",
+                padding: "11px 13px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "15px",
+              }}
+            >
+              <span
+                style={{
+                  color: "#9b9599",
+                  fontSize: "10px",
+                }}
+              >
+                ✦ Personalized semantic matching
+              </span>
+
+              <button
+                onClick={getRecommendations}
+                disabled={loading}
+                style={{
+                  border: "none",
+                  borderRadius: "9px",
+                  padding: "9px 16px",
+                  background: "#684461",
+                  color: "#ffffff",
+                  fontSize: "11px",
+                  fontWeight: "700",
+                  cursor: loading ? "default" : "pointer",
+                  opacity: loading ? 0.7 : 1,
+                }}
+              >
+                {loading ? "Finding..." : "Get Recommendations →"}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* =====================================================
+            POPULAR SEARCHES
+        ===================================================== */}
+
+        <div
+          style={{
+            marginTop: "14px",
+          }}
+        >
+          <div
+            style={{
+              color: "#8f898e",
+              fontSize: "10px",
+              fontWeight: "600",
+              marginBottom: "8px",
             }}
-            onBlur={(event) => {
-              event.target.style.border =
-                "1px solid #e2e5ee";
-
-              event.target.style.boxShadow =
-                "none";
-            }}
-          />
-
-
-          {/* ACTION AREA */}
+          >
+            Popular searches
+          </div>
 
           <div
             style={{
               display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "15px",
               flexWrap: "wrap",
-              marginTop: "13px",
+              gap: "7px",
             }}
           >
-
-            <span
-              style={{
-                color: "#9ca3af",
-                fontSize: "11px",
-              }}
-            >
-              ✦ Personalized semantic matching
-            </span>
-
-
-            <button
-              onClick={getRecommendations}
-              disabled={loading}
-              style={{
-                padding: "11px 20px",
-                border: "none",
-                borderRadius: "10px",
-                background: loading
-                  ? "#a78bfa"
-                  : "linear-gradient(135deg, #4f46e5, #7c3aed)",
-                color: "#ffffff",
-                fontSize: "13px",
-                fontWeight: "750",
-                cursor: loading
-                  ? "not-allowed"
-                  : "pointer",
-                boxShadow:
-                  "0 6px 16px rgba(99, 102, 241, 0.20)",
-                transition:
-                  "transform 0.2s ease",
-              }}
-            >
-              {loading
-                ? "Finding Jobs..."
-                : "Get Recommendations  →"}
-            </button>
-
+            {popularSearches.map((search) => (
+              <button
+                key={search}
+                onClick={() => setQuery(search)}
+                style={{
+                  background: "#ffffff",
+                  border: "1px solid #e5e1e0",
+                  borderRadius: "999px",
+                  padding: "7px 11px",
+                  color: "#6f676e",
+                  fontSize: "10px",
+                  cursor: "pointer",
+                }}
+              >
+                ↗ {search}
+              </button>
+            ))}
           </div>
+        </div>
 
+        {/* =====================================================
+            RESULTS
+        ===================================================== */}
 
-          {/* ERROR */}
-
-          {error && (
+        {jobs.length > 0 && (
+          <div
+            style={{
+              marginTop: "38px",
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "10px",
-                background: "#fff1f2",
-                border: "1px solid #fecdd3",
-                color: "#be123c",
-                padding: "13px 15px",
-                borderRadius: "11px",
-                marginTop: "18px",
-                fontSize: "12px",
-              }}
-            >
-              <span>⚠</span>
-              <span>{error}</span>
-            </div>
-          )}
-
-        </div>
-
-
-        {/* ====================================================
-            RESULTS
-        ==================================================== */}
-
-        {jobs.length > 0 && (
-
-          <div>
-
-            {/* RESULTS HEADER */}
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-end",
                 justifyContent: "space-between",
-                gap: "15px",
-                marginBottom: "17px",
+                marginBottom: "16px",
               }}
             >
-
               <div>
-
-                <div
+                <h2
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "9px",
+                    margin: 0,
+                    fontSize: "23px",
+                    fontWeight: "750",
+                    letterSpacing: "-0.5px",
+                    color: "#17131a",
                   }}
                 >
-
-                  <h2
-                    style={{
-                      margin: 0,
-                      color: "#111827",
-                      fontSize: "22px",
-                      fontWeight: "800",
-                      letterSpacing: "-0.5px",
-                    }}
-                  >
-                    {jobs.length} Recommended Jobs
-                  </h2>
-
-
-                  <span
-                    style={{
-                      background: "#ede9fe",
-                      color: "#6d28d9",
-                      padding: "5px 8px",
-                      borderRadius: "999px",
-                      fontSize: "9px",
-                      fontWeight: "800",
-                    }}
-                  >
-                    AI MATCHED
-                  </span>
-
-                </div>
-
+                  {jobs.length} Recommended Jobs
+                </h2>
 
                 <p
                   style={{
                     margin: "5px 0 0",
-                    color: "#9ca3af",
+                    color: "#969095",
                     fontSize: "11px",
                   }}
                 >
                   Ranked according to your profile
                 </p>
-
               </div>
 
-
-              <div
+              <span
                 style={{
-                  color: "#6b7280",
-                  fontSize: "11px",
-                  background: "#ffffff",
-                  border: "1px solid #e5e7eb",
-                  padding: "7px 10px",
-                  borderRadius: "9px",
+                  background: "#f5eef5",
+                  border: "1px solid #eadfea",
+                  color: "#684461",
+                  borderRadius: "999px",
+                  padding: "6px 10px",
+                  fontSize: "10px",
+                  fontWeight: "700",
                 }}
               >
-                ✦ Personalized results
-              </div>
-
+                ✦ AI MATCHED
+              </span>
             </div>
 
-
-            {/* RECOMMENDATION CARDS */}
+            {/* =================================================
+                RECOMMENDATION CARDS
+            ================================================= */}
 
             <div
               style={{
-                display: "grid",
-                gap: "14px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
               }}
             >
-
-              {jobs.map(
-                (job, index) => (
-
-                  <div
-                    key={
-                      job.id || index
-                    }
-                    style={{
-                      background: "#ffffff",
-                      border: "1px solid #e7e9ef",
-                      borderRadius: "15px",
-                      padding: "3px",
-                      transition:
-                        "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
-                    }}
-                    onMouseEnter={(event) => {
-                      event.currentTarget.style.transform =
-                        "translateY(-2px)";
-
-                      event.currentTarget.style.boxShadow =
-                        "0 12px 28px rgba(15, 23, 42, 0.07)";
-
-                      event.currentTarget.style.borderColor =
-                        "#d8d2ff";
-                    }}
-                    onMouseLeave={(event) => {
-                      event.currentTarget.style.transform =
-                        "translateY(0)";
-
-                      event.currentTarget.style.boxShadow =
-                        "none";
-
-                      event.currentTarget.style.borderColor =
-                        "#e7e9ef";
-                    }}
-                  >
-
-                    <RecommendationCard
-                      job={job}
-                    />
-
-                  </div>
-
-                )
-              )}
-
+              {jobs.map((job, index) => (
+                <RecommendationCard
+                  key={job.id || job.job_id || index}
+                  job={job}
+                />
+              ))}
             </div>
-
           </div>
-
         )}
 
+        {/* =====================================================
+            EMPTY STATE
+        ===================================================== */}
+
+        {!loading && jobs.length === 0 && (
+          <div
+            style={{
+              marginTop: "38px",
+              textAlign: "center",
+              color: "#9a9398",
+              fontSize: "11px",
+            }}
+          >
+            Enter your target role above to get personalized recommendations.
+          </div>
+        )}
       </div>
-
-
-      {/* ======================================================
-          RESPONSIVE
-      ====================================================== */}
-
-      <style>{`
-
-        @media (max-width: 700px) {
-
-          .recommendations-page {
-            padding:
-              30px
-              15px
-              60px !important;
-          }
-
-        }
-
-      `}</style>
-
     </div>
   );
 }
-
 
 export default Recommendations;
