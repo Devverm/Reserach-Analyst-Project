@@ -1,4 +1,7 @@
 from pathlib import Path
+import hashlib
+import math
+import re
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
@@ -18,51 +21,112 @@ QDRANT_PATH = PROJECT_ROOT / "data" / "qdrant"
 
 COLLECTION_NAME = "jobs"
 
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
-
+# Lightweight fixed-size vector.
 VECTOR_SIZE = 384
 
 
 # ============================================================
-# SINGLETONS
+# SINGLETON
 # ============================================================
 
-_model = None
 _client = None
 
 
 # ============================================================
-# EMBEDDING MODEL
+# TEXT TOKENIZATION
 # ============================================================
 
-def get_embedding_model():
+def tokenize(text):
     """
-    Load the embedding model only when embedding functionality
-    is actually required.
-
-    The SentenceTransformer import is intentionally performed
-    inside this function to reduce FastAPI startup memory usage.
+    Convert text into normalized tokens.
     """
 
-    global _model
+    if not text:
+        return []
 
-    if _model is None:
+    return re.findall(
+        r"[a-zA-Z0-9]+",
+        text.lower(),
+    )
 
-        print(
-            f"Loading embedding model: "
-            f"{EMBEDDING_MODEL_NAME}"
+
+# ============================================================
+# LIGHTWEIGHT EMBEDDING
+# ============================================================
+
+def create_embedding(text):
+    """
+    Create a lightweight deterministic text embedding.
+
+    This implementation avoids heavy ML dependencies such as
+    sentence-transformers and PyTorch.
+
+    The resulting vector has a fixed size of 384 dimensions
+    and is normalized for cosine similarity.
+    """
+
+    vector = [0.0] * VECTOR_SIZE
+
+    tokens = tokenize(text)
+
+    if not tokens:
+        return vector
+
+    for token in tokens:
+
+        digest = hashlib.md5(
+            token.encode("utf-8")
+        ).digest()
+
+        index = int.from_bytes(
+            digest[:4],
+            byteorder="little",
+        ) % VECTOR_SIZE
+
+        sign = (
+            1.0
+            if digest[4] % 2 == 0
+            else -1.0
         )
 
-        # Lazy import to reduce application startup memory usage
-        from sentence_transformers import SentenceTransformer
+        vector[index] += sign
 
-        _model = SentenceTransformer(
-            EMBEDDING_MODEL_NAME
-        )
+    # Normalize vector for cosine similarity.
+    magnitude = math.sqrt(
+        sum(value * value for value in vector)
+    )
 
-        print("Embedding model loaded.")
+    if magnitude > 0:
 
-    return _model
+        vector = [
+            value / magnitude
+            for value in vector
+        ]
+
+    return vector
+
+
+# ============================================================
+# BATCH EMBEDDINGS
+# ============================================================
+
+def create_embeddings(
+    texts,
+    batch_size=64,
+):
+    """
+    Generate lightweight embeddings for multiple texts.
+
+    batch_size is retained for API compatibility.
+    """
+
+    if not texts:
+        return []
+
+    return [
+        create_embedding(text)
+        for text in texts
+    ]
 
 
 # ============================================================
@@ -134,7 +198,7 @@ def create_collection():
 
 def build_job_text(job):
     """
-    Convert a job record into meaningful text for embedding.
+    Convert a job record into meaningful text.
     """
 
     roles = job.roles or []
@@ -177,55 +241,6 @@ def build_job_texts(jobs):
 
 
 # ============================================================
-# SINGLE EMBEDDING
-# ============================================================
-
-def create_embedding(text):
-    """
-    Generate one normalized embedding.
-    """
-
-    model = get_embedding_model()
-
-    embedding = model.encode(
-        text,
-        normalize_embeddings=True,
-    )
-
-    return embedding.tolist()
-
-
-# ============================================================
-# BATCH EMBEDDINGS
-# ============================================================
-
-def create_embeddings(
-    texts,
-    batch_size=64,
-):
-    """
-    Generate embeddings for multiple texts at once.
-
-    Batch encoding is significantly more efficient than
-    generating one embedding at a time.
-    """
-
-    if not texts:
-        return []
-
-    model = get_embedding_model()
-
-    embeddings = model.encode(
-        texts,
-        batch_size=batch_size,
-        show_progress_bar=False,
-        normalize_embeddings=True,
-    )
-
-    return embeddings.tolist()
-
-
-# ============================================================
 # JOB PAYLOAD
 # ============================================================
 
@@ -262,14 +277,17 @@ def upsert_jobs(
     embedding_batch_size=64,
 ):
     """
-    Generate embeddings for a batch of jobs and upsert
-    all vectors into Qdrant.
+    Generate lightweight embeddings for jobs and
+    upsert them into Qdrant.
     """
 
     if not jobs:
         return 0
 
     client = get_qdrant_client()
+
+    # Make sure the collection exists.
+    create_collection()
 
     texts = build_job_texts(jobs)
 
@@ -324,13 +342,16 @@ def semantic_search(
     limit=10,
 ):
     """
-    Search Qdrant using semantic similarity.
+    Search Qdrant using cosine similarity.
     """
 
     if not query or not query.strip():
         return []
 
     client = get_qdrant_client()
+
+    # Make sure the collection exists.
+    create_collection()
 
     query_vector = create_embedding(
         query

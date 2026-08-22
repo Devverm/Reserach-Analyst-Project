@@ -6,5 +6,3 @@ pydantic
 pydantic-settings
 ijson
 qdrant-client
-sentence-transformers
-numpy
