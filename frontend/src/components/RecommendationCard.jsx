@@ -22,129 +22,298 @@ function RecommendationCard({ job }) {
   return (
     <div
       style={{
-        background: "white",
-        padding: "25px",
-        borderRadius: "14px",
-        marginBottom: "18px",
-        boxShadow: "0 5px 18px rgba(0,0,0,0.07)",
+        background: "#ffffff",
+        padding: "22px",
+        borderRadius: "13px",
+        border: "1px solid #e8eaf0",
+        boxShadow: "none",
+        transition:
+          "transform 0.2s ease, box-shadow 0.2s ease",
+      }}
+      onMouseEnter={(event) => {
+        event.currentTarget.style.transform =
+          "translateY(-2px)";
+
+        event.currentTarget.style.boxShadow =
+          "0 12px 28px rgba(15, 23, 42, 0.07)";
+      }}
+      onMouseLeave={(event) => {
+        event.currentTarget.style.transform =
+          "translateY(0)";
+
+        event.currentTarget.style.boxShadow =
+          "none";
       }}
     >
-      {/* JOB TITLE */}
 
-      <h2
+      {/* =====================================================
+          TOP SECTION
+      ===================================================== */}
+
+      <div
         style={{
-          margin: "0 0 8px",
-          color: "#111827",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          gap: "20px",
         }}
       >
-        {job.title || "Job Title"}
-      </h2>
 
-      {/* COMPANY */}
+        <div>
 
-      <h3
+          {/* JOB TITLE */}
+
+          <h2
+            style={{
+              margin: "0 0 6px",
+              color: "#111827",
+              fontSize: "18px",
+              lineHeight: "1.35",
+              fontWeight: "800",
+              letterSpacing: "-0.3px",
+            }}
+          >
+            {job.title || "Job Title"}
+          </h2>
+
+
+          {/* COMPANY */}
+
+          <div
+            style={{
+              color: "#4b5563",
+              fontSize: "13px",
+              fontWeight: "650",
+            }}
+          >
+            {job.company || "Company not specified"}
+          </div>
+
+        </div>
+
+
+        {/* AI MATCH BADGE */}
+
+        <div
+          style={{
+            flexShrink: 0,
+            padding: "7px 10px",
+            borderRadius: "9px",
+            background:
+              finalScore >= 70
+                ? "#ecfdf5"
+                : "#f5f3ff",
+            color:
+              finalScore >= 70
+                ? "#047857"
+                : "#6d28d9",
+            fontSize: "11px",
+            fontWeight: "800",
+          }}
+        >
+          ✦ {finalScore}% Match
+        </div>
+
+      </div>
+
+
+      {/* =====================================================
+          LOCATION
+      ===================================================== */}
+
+      <div
         style={{
-          margin: "0 0 10px",
-          color: "#374151",
-        }}
-      >
-        {job.company || "Company not specified"}
-      </h3>
-
-      {/* LOCATION */}
-
-      <p
-        style={{
+          marginTop: "10px",
           color: "#6b7280",
-          marginBottom: "15px",
+          fontSize: "12px",
         }}
       >
         📍 {job.location || "Location not specified"}
-      </p>
+      </div>
 
-      {/* SKILLS */}
+
+      {/* =====================================================
+          SKILLS
+      ===================================================== */}
 
       {Array.isArray(job.skills) &&
         job.skills.length > 0 && (
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "8px",
-              marginBottom: "18px",
-            }}
-          >
-            {job.skills.map((skill, index) => (
+
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "6px",
+            marginTop: "14px",
+            marginBottom: "16px",
+          }}
+        >
+
+          {job.skills
+            .slice(0, 12)
+            .map((skill, index) => (
+
               <span
                 key={index}
                 style={{
-                  background: "#eef2ff",
-                  color: "#3730a3",
-                  padding: "7px 12px",
-                  borderRadius: "20px",
-                  fontSize: "14px",
+                  background: "#f5f3ff",
+                  border:
+                    "1px solid #ede9fe",
+                  color: "#5b21b6",
+                  padding: "5px 9px",
+                  borderRadius: "999px",
+                  fontSize: "10px",
+                  fontWeight: "600",
                 }}
               >
                 {skill}
               </span>
-            ))}
-          </div>
-        )}
 
-      {/* MAIN MATCH SCORE */}
+            ))}
+
+        </div>
+
+      )}
+
+
+      {/* =====================================================
+          SCORE SUMMARY
+      ===================================================== */}
 
       <div
         style={{
+          borderTop:
+            "1px solid #f0f1f5",
+          paddingTop: "14px",
           display: "flex",
           alignItems: "center",
-          gap: "20px",
-          marginBottom: "15px",
+          justifyContent: "space-between",
+          gap: "15px",
           flexWrap: "wrap",
         }}
       >
-        <strong
+
+        <div
           style={{
-            fontSize: "19px",
-            color: "#111827",
+            display: "flex",
+            alignItems: "center",
+            gap: "16px",
+            flexWrap: "wrap",
           }}
         >
-          AI Match: {finalScore}%
-        </strong>
+
+          {/* AI MATCH */}
+
+          <span
+            style={{
+              color: "#374151",
+              fontSize: "11px",
+              fontWeight: "650",
+            }}
+          >
+            AI Match{" "}
+            <strong
+              style={{
+                color: "#4f46e5",
+              }}
+            >
+              {finalScore}%
+            </strong>
+          </span>
+
+
+          {/* SEMANTIC */}
+
+          <span
+            style={{
+              color: "#9ca3af",
+              fontSize: "11px",
+            }}
+          >
+            Semantic{" "}
+            <strong
+              style={{
+                color: "#6b7280",
+              }}
+            >
+              {semanticScore}%
+            </strong>
+          </span>
+
+        </div>
+
 
         <span
           style={{
-            color: "#6b7280",
+            color: "#9ca3af",
+            fontSize: "10px",
           }}
         >
-          Semantic: {semanticScore}%
+          Personalized match
         </span>
+
       </div>
 
-      {/* MATCH BREAKDOWN */}
+
+      {/* =====================================================
+          MATCH BREAKDOWN
+      ===================================================== */}
 
       <div
         style={{
           display: "flex",
           flexWrap: "wrap",
-          gap: "10px",
-          fontSize: "14px",
-          color: "#6b7280",
+          gap: "7px",
+          marginTop: "12px",
         }}
       >
-        <span>
-          Skill: {skillScore}%
-        </span>
 
-        <span>
-          Role: {roleScore}%
-        </span>
+        <div
+          style={{
+            background: "#f8fafc",
+            border: "1px solid #eef0f4",
+            borderRadius: "7px",
+            padding: "5px 8px",
+            fontSize: "10px",
+            color: "#6b7280",
+          }}
+        >
+          Skill <strong>{skillScore}%</strong>
+        </div>
 
-        <span>
-          Location: {locationScore}%
-        </span>
+
+        <div
+          style={{
+            background: "#f8fafc",
+            border: "1px solid #eef0f4",
+            borderRadius: "7px",
+            padding: "5px 8px",
+            fontSize: "10px",
+            color: "#6b7280",
+          }}
+        >
+          Role <strong>{roleScore}%</strong>
+        </div>
+
+
+        <div
+          style={{
+            background: "#f8fafc",
+            border: "1px solid #eef0f4",
+            borderRadius: "7px",
+            padding: "5px 8px",
+            fontSize: "10px",
+            color: "#6b7280",
+          }}
+        >
+          Location <strong>{locationScore}%</strong>
+        </div>
+
       </div>
+
     </div>
   );
 }
+
 
 export default RecommendationCard;
