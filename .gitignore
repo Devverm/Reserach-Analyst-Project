@@ -1,0 +1,16 @@
+.env
+backend/.env
+
+__pycache__/
+*.pyc
+
+data/raw/
+data/processed/
+
+node_modules/
+
+*.sqlite
+*.sqlite3
+*.db
+data/
+node_modules/
