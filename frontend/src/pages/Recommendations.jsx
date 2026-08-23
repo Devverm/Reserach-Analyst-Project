@@ -1,6 +1,11 @@
 import { useState } from "react";
 import RecommendationCard from "../components/RecommendationCard";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL !== undefined
+    ? import.meta.env.VITE_API_BASE_URL
+    : "http://127.0.0.1:8000";
+
 function Recommendations() {
   const [query, setQuery] = useState(
     "Python Data Scientist with Machine Learning experience in Bengaluru"
@@ -16,7 +21,7 @@ function Recommendations() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/recommendations?query=${encodeURIComponent(
+        `${API_BASE_URL}/api/recommendations?query=${encodeURIComponent(
           query
         )}`
       );
