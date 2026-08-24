@@ -53,6 +53,11 @@ def search_jobs(
         description="Filter by skill",
     ),
 
+    source: str | None = Query(
+        default=None,
+        description="Filter by job source/platform (e.g. LinkedIn, Naukri, Indeed)",
+    ),
+
     min_experience: int | None = Query(
         default=None,
         ge=0,
@@ -155,6 +160,18 @@ def search_jobs(
         )
 
     # ========================================================
+    # SOURCE
+    # ========================================================
+
+    if source:
+
+        query = query.filter(
+            Job.source.ilike(
+                source.strip()
+            )
+        )
+
+    # ========================================================
     # LOCATION TYPE
     # ========================================================
 
@@ -252,11 +269,18 @@ def semantic_job_search(
         description="Optional location to improve ranking",
     ),
 
+    source: str | None = Query(
+        default=None,
+        description="Optional source/platform filter (e.g. LinkedIn, Naukri, Indeed)",
+    ),
+
     experience: int | None = Query(
         default=None,
         ge=0,
         description="User experience in years",
     ),
+
+    db: Session = Depends(get_db),
 ):
     """
     AI-powered semantic job search.
@@ -265,16 +289,60 @@ def semantic_job_search(
         1. Sentence Transformer embeddings
         2. Qdrant vector similarity search
         3. Hybrid ranking
+
+    If a source filter is provided, retrieval limit is widened
+    before ranking so that filtering by source afterward still
+    returns a full page of results.
     """
 
     # ========================================================
     # RETRIEVE SEMANTIC CANDIDATES
     # ========================================================
 
+    retrieval_limit = limit
+
+    if source:
+        # Qdrant doesn't store source in its payload, so we
+        # over-fetch candidates here and filter by source
+        # against Postgres afterward.
+        retrieval_limit = min(limit * 3, 150)
+
     jobs = retrieve_jobs(
         query=q,
-        limit=limit,
+        limit=retrieval_limit,
     )
+
+    # ========================================================
+    # FILTER BY SOURCE (via Postgres lookup)
+    # ========================================================
+
+    if source and jobs:
+
+        job_ids = [
+            job.get("id")
+            for job in jobs
+            if job.get("id") is not None
+        ]
+
+        source_by_id = dict(
+            db.query(Job.id, Job.source)
+            .filter(Job.id.in_(job_ids))
+            .all()
+        )
+
+        source_normalized = source.strip().lower()
+
+        jobs = [
+            job
+            for job in jobs
+            if (
+                source_by_id.get(job.get("id"))
+                and source_by_id.get(job.get("id")).strip().lower()
+                == source_normalized
+            )
+        ]
+
+        jobs = jobs[:limit]
 
     # ========================================================
     # PREPARE RANKING SIGNALS
@@ -307,6 +375,40 @@ def semantic_job_search(
         "query": q,
         "total": len(ranked_jobs),
         "results": ranked_jobs,
+    }
+
+
+# ============================================================
+# LIST AVAILABLE JOB SOURCES (for dropdown filters)
+# ============================================================
+# NOTE: This route MUST stay above "/{job_id}" below, otherwise
+# FastAPI will try to match "sources" as a job_id and fail with
+# a 422 error, since job_id is typed as an integer.
+
+@router.get(
+    "/sources",
+)
+def get_job_sources(
+    db: Session = Depends(get_db),
+):
+    """
+    Return the list of distinct job sources/platforms currently
+    present in the database (e.g. LinkedIn, Naukri, Indeed,
+    Internshala), for populating a filter dropdown.
+    """
+
+    rows = (
+        db.query(Job.source)
+        .filter(Job.source.isnot(None))
+        .distinct()
+        .order_by(Job.source.asc())
+        .all()
+    )
+
+    sources = [row[0] for row in rows if row[0]]
+
+    return {
+        "sources": sources,
     }
 
 

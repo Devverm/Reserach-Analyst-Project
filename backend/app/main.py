@@ -69,3 +69,5 @@ def root():
         "message": "AI Powered Job Board API is running",
         "status": "healthy",
     }
+
+
