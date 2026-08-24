@@ -161,9 +161,9 @@ Jobs are ranked using multiple matching factors:
 
 - Semantic similarity
 - Skill match
-- Role match
+- Role match    
 - Location match
-- Overall relevance
+- Overall relevance        
 
 Example:
 
