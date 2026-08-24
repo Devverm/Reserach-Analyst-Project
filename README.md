@@ -674,8 +674,8 @@ Check that PostgreSQL is running and verify:
 - Automated job-data updates
 - Analytics dashboard
 
-Demo Link: https://drive.google.com/file/d/1uQmn0x3y66qPHPfD3rBNqjfA8NKOS9Yg/view?usp=sharing
-Deployment Link: https://reserach-analyst-project.onrender.com
+-Demo Link: https://drive.google.com/file/d/1uQmn0x3y66qPHPfD3rBNqjfA8NKOS9Yg/view?usp=sharing
+-Deployment Link: https://reserach-analyst-project.onrender.com
 
 ---
   
