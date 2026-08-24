@@ -678,7 +678,7 @@ Demo Link: https://drive.google.com/file/d/1uQmn0x3y66qPHPfD3rBNqjfA8NKOS9Yg/vie
 Deployment Link: https://reserach-analyst-project.onrender.com
 
 ---
-
+  
 # 📄 License
 
 This project is currently intended for educational, portfolio, and development purposes.
