@@ -43,7 +43,6 @@ export async function semanticSearchJobs({
   query,
   skill = "",
   location = "",
-  source = "",
   experience = "",
   limit = 20,
 }) {
@@ -58,10 +57,6 @@ export async function semanticSearchJobs({
 
   if (location) {
     queryParams.append("location", location);
-  }
-
-  if (source) {
-    queryParams.append("source", source);
   }
 
   if (
@@ -84,25 +79,6 @@ export async function semanticSearchJobs({
 
     throw new Error(
       `Semantic search failed: ${response.status} ${errorText}`
-    );
-  }
-
-  return response.json();
-}
-
-
-// ============================================================
-// GET AVAILABLE JOB SOURCES (for the source filter dropdown)
-// ============================================================
-
-export async function getJobSources() {
-  const response = await fetch(
-    `${API_BASE_URL}/api/jobs/sources`
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch job sources: ${response.status}`
     );
   }
 
