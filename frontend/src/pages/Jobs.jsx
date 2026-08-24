@@ -1,16 +1,40 @@
-import { useState } from "react";
-import { semanticSearchJobs } from "../services/api";
+import { useState, useEffect } from "react";
+import { semanticSearchJobs, getJobSources } from "../services/api";
 
 function Jobs() {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
   const [skill, setSkill] = useState("");
   const [experience, setExperience] = useState("");
+  const [source, setSource] = useState("");
+  const [sources, setSources] = useState([]);
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [searched, setSearched] = useState(false);
+
+  // ============================================================
+  // LOAD AVAILABLE JOB SOURCES (for the dropdown)
+  // ============================================================
+
+  useEffect(() => {
+    let cancelled = false;
+
+    getJobSources()
+      .then((data) => {
+        if (!cancelled) {
+          setSources(data.sources || []);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load job sources:", err);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // ============================================================
   // SEARCH
@@ -33,6 +57,7 @@ function Jobs() {
         query: query.trim(),
         location,
         skill,
+        source,
         experience,
         limit: 20,
       });
@@ -81,10 +106,28 @@ function Jobs() {
       .toUpperCase();
   };
 
-  const getMatchClass = (score) => {
-    if (score >= 80) return "match-high";
-    if (score >= 60) return "match-medium";
-    return "match-low";
+  const getMatchStyle = (score) => {
+    if (score >= 80) {
+      return {
+        background: "#ecfdf5",
+        color: "#047857",
+        border: "1px solid #bbf7d0",
+      };
+    }
+
+    if (score >= 60) {
+      return {
+        background: "#eef2ff",
+        color: "#4f46e5",
+        border: "1px solid #c7d2fe",
+      };
+    }
+
+    return {
+      background: "#f5f3ff",
+      color: "#7c3aed",
+      border: "1px solid #ddd6fe",
+    };
   };
 
   const quickSearches = [
@@ -99,20 +142,33 @@ function Jobs() {
   return (
     <div className="jobs-page">
 
+      {/* ======================================================
+          PAGE STYLES
+      ====================================================== */}
+
       <style>{`
 
         * {
           box-sizing: border-box;
         }
 
-        /* ========================================================
-           PAGE
-        ======================================================== */
-
         .jobs-page {
           min-height: 100vh;
-          background: #f8f7f3;
-          color: #16151c;
+          background:
+            radial-gradient(
+              circle at 85% 5%,
+              rgba(124, 58, 237, 0.08),
+              transparent 28%
+            ),
+            radial-gradient(
+              circle at 10% 20%,
+              rgba(79, 70, 229, 0.06),
+              transparent 25%
+            ),
+            #f7f8fc;
+
+          color: #111827;
+
           font-family:
             Inter,
             -apple-system,
@@ -120,306 +176,267 @@ function Jobs() {
             "Segoe UI",
             sans-serif;
 
-          padding-bottom: 90px;
+          padding:
+            46px
+            28px
+            80px;
         }
 
         .jobs-container {
-          width: min(1120px, calc(100% - 40px));
+          width: 100%;
+          max-width: 1280px;
           margin: 0 auto;
         }
 
-
-        /* ========================================================
+        /* ====================================================
            HERO
-        ======================================================== */
+        ==================================================== */
 
-        .hero-section {
-          background:
-            radial-gradient(
-              circle at 75% 15%,
-              rgba(111, 66, 193, 0.08),
-              transparent 30%
-            ),
-            #f8f7f3;
-
-          padding:
-            78px
-            0
-            105px;
+        .hero {
+          margin-bottom: 30px;
         }
 
-        .hero-content {
-          max-width: 780px;
-        }
-
-        .hero-eyebrow {
+        .hero-badge {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
+          gap: 7px;
 
-          margin-bottom: 20px;
-
-          padding:
-            8px
-            13px;
+          padding: 8px 13px;
 
           border-radius: 999px;
 
-          background: #eee9f5;
-          color: #684476;
+          background:
+            linear-gradient(
+              135deg,
+              #ede9fe,
+              #f5f3ff
+            );
 
-          font-size: 11px;
+          color: #6d28d9;
+
+          font-size: 12px;
           font-weight: 800;
 
-          letter-spacing: 0.5px;
-          text-transform: uppercase;
-        }
+          letter-spacing: 0.3px;
 
-        .hero-eyebrow-dot {
-          width: 7px;
-          height: 7px;
+          border: 1px solid #ddd6fe;
 
-          border-radius: 50%;
-
-          background: #70447c;
+          margin-bottom: 16px;
         }
 
         .hero-title {
           margin: 0;
 
-          max-width: 760px;
+          max-width: 700px;
 
           font-size:
-            clamp(44px, 6vw, 72px);
+            clamp(38px, 5vw, 62px);
 
-          line-height: 0.98;
+          line-height: 1.02;
 
-          letter-spacing: -3.5px;
+          letter-spacing: -2.8px;
 
           font-weight: 850;
 
-          color: #16151c;
+          color: #111827;
         }
 
-        .hero-highlight {
-          color: #70447c;
+        .hero-gradient {
+          display: inline;
+
+          background:
+            linear-gradient(
+              90deg,
+              #4f46e5,
+              #7c3aed,
+              #9333ea
+            );
+
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
 
         .hero-description {
           max-width: 650px;
 
           margin:
-            24px
+            18px
             0
             0;
 
-          color: #6f6b72;
+          color: #6b7280;
 
           font-size: 16px;
-          line-height: 1.7;
+
+          line-height: 1.65;
         }
 
+        /* ====================================================
+           SEARCH PANEL
+        ==================================================== */
 
-        /* ========================================================
-           SEARCH SECTION
-        ======================================================== */
-
-        .search-wrapper {
-          position: relative;
-
-          margin-top: -55px;
-
-          z-index: 5;
-        }
-
-        .search-card {
-          background: #ffffff;
+        .search-panel {
+          background: rgba(255, 255, 255, 0.94);
 
           border:
             1px solid
-            #e7e4df;
+            #e7e9f0;
 
-          border-radius: 20px;
+          border-radius: 22px;
+
+          padding: 12px;
 
           box-shadow:
-            0 20px 55px
-            rgba(35, 28, 40, 0.10);
+            0 20px 50px
+            rgba(15, 23, 42, 0.08);
 
-          overflow: hidden;
+          margin-bottom: 15px;
+
+          backdrop-filter: blur(12px);
         }
 
-        .main-search {
+        .search-grid {
           display: grid;
 
           grid-template-columns:
-            minmax(250px, 1.8fr)
-            minmax(180px, 1fr)
+            minmax(260px, 2.2fr)
+            minmax(160px, 1fr)
+            minmax(140px, 0.9fr)
+            minmax(110px, 0.7fr)
             auto;
 
-          gap: 0;
+          gap: 9px;
 
-          padding: 10px;
+          align-items: stretch;
         }
 
         .search-field {
           position: relative;
-
-          display: flex;
-          align-items: center;
-
           min-width: 0;
         }
 
-        .search-field + .search-field {
-          border-left:
-            1px solid
-            #ece9e5;
-        }
-
-        .search-icon {
+        .field-icon {
           position: absolute;
 
-          left: 17px;
+          left: 15px;
+          top: 50%;
 
-          color: #77717a;
+          transform:
+            translateY(-50%);
 
-          font-size: 17px;
+          color: #9ca3af;
+
+          font-size: 16px;
 
           pointer-events: none;
+
+          z-index: 1;
         }
 
         .search-input {
           width: 100%;
 
-          height: 58px;
+          height: 56px;
 
-          border: none;
+          padding:
+            0
+            14px
+            0
+            42px;
+
+          border:
+            1px solid
+            #e5e7eb;
+
+          border-radius: 13px;
+
+          background: #fafbfc;
+
+          color: #111827;
+
+          font-size: 13px;
 
           outline: none;
 
-          background: transparent;
+          transition:
+            border 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+        }
 
-          padding:
-            0
-            16px
-            0
-            46px;
+        .search-input:focus {
+          background: white;
 
-          color: #242129;
+          border-color: #818cf8;
 
-          font-size: 14px;
+          box-shadow:
+            0 0 0 4px
+            rgba(99, 102, 241, 0.1);
         }
 
         .search-input::placeholder {
-          color: #aaa5aa;
+          color: #9ca3af;
         }
 
-        .location-input {
-          padding-left: 46px;
+        .experience-input {
+          padding-left: 14px;
         }
 
         .search-button {
-          height: 58px;
-
-          border: none;
-
-          border-radius: 12px;
+          height: 56px;
 
           padding:
             0
-            25px;
+            23px;
 
-          background: #684476;
+          border: none;
+
+          border-radius: 13px;
+
+          background:
+            linear-gradient(
+              135deg,
+              #4f46e5,
+              #7c3aed
+            );
 
           color: white;
 
           font-size: 13px;
+
           font-weight: 800;
 
           cursor: pointer;
 
-          transition:
-            transform 0.2s ease,
-            background 0.2s ease,
-            box-shadow 0.2s ease;
-        }
-
-        .search-button:hover:not(:disabled) {
-          background: #573666;
-
-          transform: translateY(-1px);
+          white-space: nowrap;
 
           box-shadow:
             0 8px 20px
-            rgba(104, 68, 118, 0.22);
+            rgba(79, 70, 229, 0.25);
+
+          transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            opacity 0.2s ease;
+        }
+
+        .search-button:hover:not(:disabled) {
+          transform: translateY(-1px);
+
+          box-shadow:
+            0 12px 26px
+            rgba(79, 70, 229, 0.3);
         }
 
         .search-button:disabled {
-          opacity: 0.6;
+          opacity: 0.65;
+
           cursor: not-allowed;
         }
 
-
-        /* ========================================================
-           FILTERS
-        ======================================================== */
-
-        .filter-row {
-          display: grid;
-
-          grid-template-columns:
-            1fr
-            1fr
-            1fr;
-
-          gap: 10px;
-
-          padding:
-            0
-            10px
-            10px;
-        }
-
-        .filter-input {
-          height: 45px;
-
-          width: 100%;
-
-          border:
-            1px solid
-            #e8e5e1;
-
-          border-radius: 10px;
-
-          background: #faf9f7;
-
-          padding:
-            0
-            14px;
-
-          color: #514b54;
-
-          font-size: 12px;
-
-          outline: none;
-
-          transition: all 0.2s ease;
-        }
-
-        .filter-input:focus {
-          background: white;
-
-          border-color: #b9a5bf;
-
-          box-shadow:
-            0 0 0 3px
-            rgba(104, 68, 118, 0.08);
-        }
-
-
-        /* ========================================================
-           POPULAR SEARCHES
-        ======================================================== */
+        /* ====================================================
+           QUICK SEARCH
+        ==================================================== */
 
         .quick-searches {
           display: flex;
@@ -430,13 +447,16 @@ function Jobs() {
 
           gap: 8px;
 
-          margin-top: 18px;
+          margin:
+            0
+            0
+            34px;
         }
 
         .popular-label {
-          color: #8b858d;
+          color: #6b7280;
 
-          font-size: 11px;
+          font-size: 12px;
 
           font-weight: 700;
 
@@ -446,69 +466,67 @@ function Jobs() {
         .quick-button {
           border:
             1px solid
-            #dfdbd8;
+            #e2e5ec;
 
-          background: transparent;
+          background: white;
 
-          color: #68626a;
+          color: #5b6474;
 
           padding:
             7px
-            12px;
+            13px;
 
           border-radius: 999px;
 
           font-size: 11px;
 
+          font-weight: 600;
+
           cursor: pointer;
 
-          transition: all 0.2s ease;
+          transition:
+            all 0.2s ease;
         }
 
         .quick-button:hover {
-          background: #eee8f0;
+          color: #4f46e5;
 
-          color: #684476;
+          border-color: #c7d2fe;
 
-          border-color: #cbb9cf;
+          background: #f5f7ff;
 
           transform: translateY(-1px);
         }
 
-
-        /* ========================================================
+        /* ====================================================
            ERROR
-        ======================================================== */
+        ==================================================== */
 
         .error-box {
-          margin-top: 25px;
+          background: #fff1f2;
+
+          color: #be123c;
+
+          border:
+            1px solid
+            #fecdd3;
 
           padding:
             14px
             17px;
 
-          border:
-            1px solid
-            #f1c8ce;
+          border-radius: 13px;
 
-          border-radius: 12px;
-
-          background: #fff5f6;
-
-          color: #a63c4c;
+          margin-bottom: 25px;
 
           font-size: 13px;
+
           font-weight: 600;
         }
 
-
-        /* ========================================================
-           RESULTS SECTION
-        ======================================================== */
-
-        .results-section {
-          padding-top: 70px;
-        }
+        /* ====================================================
+           RESULTS HEADER
+        ==================================================== */
 
         .results-header {
           display: flex;
@@ -517,197 +535,233 @@ function Jobs() {
 
           align-items: flex-end;
 
-          gap: 20px;
+          gap: 15px;
 
-          margin-bottom: 22px;
+          margin-bottom: 18px;
         }
 
         .results-title {
           margin: 0;
 
-          font-size: 30px;
+          font-size: 26px;
 
-          letter-spacing: -1.1px;
+          letter-spacing: -0.8px;
 
-          font-weight: 820;
+          font-weight: 800;
+
+          color: #111827;
         }
 
-        .results-number {
-          color: #684476;
+        .results-title-number {
+          color: #4f46e5;
         }
 
-        .results-muted {
-          color: #77727a;
+        .results-title-light {
+          color: #6b7280;
 
           font-weight: 500;
         }
 
         .results-subtitle {
           margin:
-            6px
+            5px
             0
             0;
 
-          color: #969197;
+          color: #9ca3af;
 
           font-size: 12px;
         }
 
         .ai-ranked {
-          display: inline-flex;
+          display: flex;
 
           align-items: center;
 
           gap: 7px;
 
+          background: white;
+
+          border:
+            1px solid
+            #e5e7eb;
+
           padding:
             9px
             13px;
 
-          border:
-            1px solid
-            #ded8e0;
+          border-radius: 10px;
 
-          border-radius: 999px;
-
-          background: #ffffff;
-
-          color: #706a72;
+          color: #6b7280;
 
           font-size: 11px;
 
-          font-weight: 700;
+          font-weight: 600;
         }
 
-        .ai-star {
-          color: #684476;
+        .ai-ranked-icon {
+          color: #7c3aed;
+
+          font-size: 14px;
         }
 
+        /* ====================================================
+           JOB GRID
+        ==================================================== */
 
-        /* ========================================================
-           JOB LIST
-        ======================================================== */
+        .job-grid {
+          display: grid;
 
-        .job-list {
+          grid-template-columns:
+            repeat(
+              3,
+              minmax(0, 1fr)
+            );
+
+          gap: 16px;
+        }
+
+        /* ====================================================
+           JOB CARD
+        ==================================================== */
+
+        .job-card {
+          position: relative;
+
+          background:
+            rgba(255, 255, 255, 0.96);
+
+          border:
+            1px solid
+            #e7e9ef;
+
+          border-radius: 18px;
+
+          padding: 19px;
+
+          min-height: 340px;
+
           display: flex;
 
           flex-direction: column;
 
-          gap: 12px;
-        }
+          overflow: hidden;
 
-
-        /* ========================================================
-           JOB CARD
-        ======================================================== */
-
-        .job-card {
-          display: grid;
-
-          grid-template-columns:
-            64px
-            minmax(0, 1fr)
-            auto;
-
-          align-items: center;
-
-          gap: 20px;
-
-          background: #ffffff;
-
-          border:
-            1px solid
-            #e8e5e2;
-
-          border-radius: 15px;
-
-          padding:
-            22px
-            24px;
+          box-shadow:
+            0 5px 18px
+            rgba(15, 23, 42, 0.035);
 
           transition:
-            transform 0.22s ease,
-            box-shadow 0.22s ease,
-            border-color 0.22s ease;
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            border 0.25s ease;
+        }
+
+        .job-card::before {
+          content: "";
+
+          position: absolute;
+
+          left: 0;
+          top: 0;
+
+          width: 100%;
+          height: 3px;
+
+          background:
+            linear-gradient(
+              90deg,
+              #4f46e5,
+              #8b5cf6
+            );
+
+          opacity: 0;
+
+          transition:
+            opacity 0.25s ease;
         }
 
         .job-card:hover {
-          transform: translateY(-2px);
+          transform:
+            translateY(-4px);
 
-          border-color: #d7c9da;
+          border-color: #d9dcf0;
 
           box-shadow:
-            0 12px 30px
-            rgba(35, 28, 40, 0.08);
+            0 18px 35px
+            rgba(15, 23, 42, 0.09);
         }
 
+        .job-card:hover::before {
+          opacity: 1;
+        }
 
-        /* ========================================================
-           COMPANY LOGO
-        ======================================================== */
+        /* ====================================================
+           COMPANY HEADER
+        ==================================================== */
 
-        .company-logo {
-          width: 56px;
-          height: 56px;
+        .company-header {
+          display: flex;
 
-          border-radius: 13px;
+          align-items: flex-start;
 
+          justify-content: space-between;
+
+          gap: 10px;
+
+          margin-bottom: 17px;
+        }
+
+        .company-info {
           display: flex;
 
           align-items: center;
-          justify-content: center;
+
+          gap: 10px;
+
+          min-width: 0;
+        }
+
+        .company-logo {
+          width: 43px;
+          height: 43px;
+
+          flex-shrink: 0;
+
+          border-radius: 12px;
 
           background:
             linear-gradient(
               135deg,
-              #eee8f0,
-              #f6f2f7
+              #eef2ff,
+              #f5f3ff
             );
 
           border:
             1px solid
-            #ddd3e0;
+            #e0e7ff;
 
-          color: #684476;
+          display: flex;
 
-          font-size: 14px;
+          align-items: center;
 
-          font-weight: 850;
+          justify-content: center;
 
-          letter-spacing: -0.4px;
-        }
-
-
-        /* ========================================================
-           JOB INFORMATION
-        ======================================================== */
-
-        .job-content {
-          min-width: 0;
-        }
-
-        .company-name {
-          margin-bottom: 4px;
-
-          color: #777078;
+          color: #4f46e5;
 
           font-size: 12px;
 
-          font-weight: 650;
+          font-weight: 800;
+
+          letter-spacing: -0.2px;
         }
 
-        .job-title {
-          margin: 0;
+        .company-name {
+          color: #6b7280;
 
-          color: #1d1a20;
+          font-size: 12px;
 
-          font-size: 19px;
-
-          line-height: 1.25;
-
-          letter-spacing: -0.4px;
-
-          font-weight: 800;
+          font-weight: 600;
 
           white-space: nowrap;
 
@@ -716,61 +770,47 @@ function Jobs() {
           text-overflow: ellipsis;
         }
 
-        .verified {
-          display: inline-flex;
+        .verified-text {
+          margin-top: 3px;
 
-          align-items: center;
-
-          gap: 4px;
-
-          margin-left: 7px;
-
-          color: #8b858c;
+          color: #a1a8b5;
 
           font-size: 10px;
-
-          font-weight: 500;
         }
 
-        .job-meta {
-          display: flex;
+        .match-badge {
+          flex-shrink: 0;
 
-          flex-wrap: wrap;
+          padding:
+            6px
+            9px;
 
-          gap: 13px;
-
-          margin-top: 9px;
-        }
-
-        .meta-item {
-          color: #77717a;
+          border-radius: 9px;
 
           font-size: 11px;
+
+          font-weight: 800;
         }
 
-        .meta-item strong {
-          color: #565058;
-          font-weight: 650;
-        }
+        /* ====================================================
+           TITLE
+        ==================================================== */
 
-
-        /* ========================================================
-           DESCRIPTION
-        ======================================================== */
-
-        .job-description {
-          max-width: 720px;
-
+        .job-title {
           margin:
-            10px
             0
-            0;
+            0
+            12px;
 
-          color: #8b858c;
+          color: #111827;
 
-          font-size: 11px;
+          font-size: 18px;
 
-          line-height: 1.55;
+          line-height: 1.3;
+
+          letter-spacing: -0.35px;
+
+          font-weight: 800;
 
           display:
             -webkit-box;
@@ -782,35 +822,100 @@ function Jobs() {
           overflow: hidden;
         }
 
+        /* ====================================================
+           META
+        ==================================================== */
 
-        /* ========================================================
+        .job-meta {
+          display: flex;
+
+          flex-wrap: wrap;
+
+          gap: 7px;
+
+          margin-bottom: 14px;
+        }
+
+        .meta-pill {
+          display: inline-flex;
+
+          align-items: center;
+
+          gap: 4px;
+
+          padding:
+            5px
+            8px;
+
+          border-radius: 7px;
+
+          background: #fafafa;
+
+          color: #6b7280;
+
+          font-size: 10px;
+
+          border:
+            1px solid
+            #eeeeef;
+        }
+
+        /* ====================================================
+           DESCRIPTION
+        ==================================================== */
+
+        .job-description {
+          margin:
+            0
+            0
+            14px;
+
+          color: #737b8a;
+
+          font-size: 12px;
+
+          line-height: 1.6;
+
+          display:
+            -webkit-box;
+
+          -webkit-line-clamp: 3;
+
+          -webkit-box-orient: vertical;
+
+          overflow: hidden;
+        }
+
+        /* ====================================================
            SKILLS
-        ======================================================== */
+        ==================================================== */
 
-        .skills {
+        .skills-container {
           display: flex;
 
           flex-wrap: wrap;
 
           gap: 6px;
 
-          margin-top: 10px;
+          margin-top: 1px;
         }
 
         .skill-pill {
-          padding:
-            5px
-            9px;
+          background:
+            #f5f7ff;
 
           border:
             1px solid
-            #e3dfe4;
+            #e3e7ff;
 
-          border-radius: 5px;
+          color:
+            #4f46e5;
 
-          background: #faf9fa;
+          padding:
+            5px
+            8px;
 
-          color: #716b73;
+          border-radius: 999px;
 
           font-size: 10px;
 
@@ -818,137 +923,117 @@ function Jobs() {
         }
 
         .more-pill {
+          background: #fafafa;
+
+          border:
+            1px solid
+            #e5e7eb;
+
+          color: #6b7280;
+
           padding:
             5px
-            9px;
+            8px;
 
-          border-radius: 5px;
-
-          background: #f1edf2;
-
-          color: #684476;
+          border-radius: 999px;
 
           font-size: 10px;
 
-          font-weight: 700;
+          font-weight: 600;
         }
 
+        /* ====================================================
+           BOTTOM
+        ==================================================== */
 
-        /* ========================================================
-           RIGHT SIDE
-        ======================================================== */
+        .job-bottom {
+          margin-top: auto;
 
-        .job-score {
+          padding-top: 16px;
+        }
+
+        .divider {
+          height: 1px;
+
+          background: #edf0f4;
+
+          margin-bottom: 13px;
+        }
+
+        .bottom-row {
           display: flex;
 
-          flex-direction: column;
+          justify-content: space-between;
 
-          align-items: flex-end;
+          align-items: center;
 
-          gap: 12px;
-
-          min-width: 120px;
-        }
-
-        .match-badge {
-          padding:
-            7px
-            11px;
-
-          border-radius: 7px;
-
-          font-size: 11px;
-
-          font-weight: 800;
-
-          white-space: nowrap;
-        }
-
-        .match-high {
-          background: #edf8f2;
-          color: #26734c;
-          border: 1px solid #d2eadc;
-        }
-
-        .match-medium {
-          background: #f3eff6;
-          color: #684476;
-          border: 1px solid #ded3e2;
-        }
-
-        .match-low {
-          background: #f7f4ef;
-          color: #8a704d;
-          border: 1px solid #eadfce;
-        }
-
-        .semantic {
-          text-align: right;
+          gap: 10px;
         }
 
         .semantic-label {
-          color: #aaa4aa;
+          color: #8b93a1;
 
-          font-size: 9px;
+          font-size: 10px;
 
-          margin-bottom: 2px;
+          margin-bottom: 3px;
         }
 
-        .semantic-value {
-          color: #37313a;
+        .semantic-score {
+          color: #111827;
 
-          font-size: 13px;
+          font-size: 14px;
 
           font-weight: 800;
         }
 
-        .view-button {
-          padding:
-            8px
-            13px;
-
+        .match-button {
           border:
             1px solid
-            #ddd6df;
+            #e1e4ef;
 
-          border-radius: 8px;
+          background: #ffffff;
 
-          background: white;
+          color: #4f46e5;
 
-          color: #684476;
+          padding:
+            8px
+            11px;
+
+          border-radius: 9px;
 
           font-size: 10px;
 
           font-weight: 800;
+
+          cursor: default;
         }
 
-
-        /* ========================================================
+        /* ====================================================
            LOADING
-        ======================================================== */
+        ==================================================== */
 
-        .loading-list {
-          display: flex;
+        .loading-grid {
+          display: grid;
 
-          flex-direction: column;
+          grid-template-columns:
+            repeat(
+              3,
+              minmax(0, 1fr)
+            );
 
-          gap: 12px;
+          gap: 16px;
         }
 
         .skeleton {
-          height: 142px;
+          height: 340px;
 
-          border:
-            1px solid
-            #e8e5e2;
-
-          border-radius: 15px;
+          border-radius: 18px;
 
           background:
             linear-gradient(
               90deg,
               #ffffff 25%,
-              #f0eeec 50%,
+              #f2f3f7 50%,
               #ffffff 75%
             );
 
@@ -956,6 +1041,10 @@ function Jobs() {
 
           animation:
             skeletonLoading 1.4s infinite;
+
+          border:
+            1px solid
+            #e7e9ef;
         }
 
         @keyframes skeletonLoading {
@@ -968,331 +1057,286 @@ function Jobs() {
           }
         }
 
-
-        /* ========================================================
+        /* ====================================================
            EMPTY
-        ======================================================== */
+        ==================================================== */
 
         .empty-state {
-          padding:
-            75px
-            25px;
-
-          text-align: center;
-
           background: white;
 
           border:
             1px solid
-            #e8e5e2;
+            #e5e7eb;
 
-          border-radius: 15px;
+          border-radius: 18px;
+
+          padding:
+            70px
+            30px;
+
+          text-align: center;
+
+          box-shadow:
+            0 8px 25px
+            rgba(15, 23, 42, 0.04);
         }
 
         .empty-icon {
-          width: 58px;
-          height: 58px;
-
-          display: flex;
-
-          align-items: center;
-          justify-content: center;
+          width: 60px;
+          height: 60px;
 
           margin:
             0
             auto
-            16px;
+            15px;
 
-          border-radius: 16px;
+          border-radius: 18px;
 
-          background: #f0eaf2;
+          display: flex;
 
-          color: #684476;
+          align-items: center;
 
-          font-size: 23px;
+          justify-content: center;
+
+          background:
+            linear-gradient(
+              135deg,
+              #eef2ff,
+              #f5f3ff
+            );
+
+          font-size: 25px;
         }
 
         .empty-title {
           margin:
             0
             0
-            7px;
+            8px;
+
+          color: #111827;
 
           font-size: 18px;
-
-          font-weight: 800;
         }
 
         .empty-text {
           margin: 0;
 
-          color: #89838a;
+          color: #6b7280;
 
           font-size: 13px;
         }
 
+        /* ====================================================
+           TABLET
+        ==================================================== */
 
-        /* ========================================================
-           RESPONSIVE
-        ======================================================== */
+        @media (max-width: 1050px) {
 
-        @media (max-width: 850px) {
-
-          .hero-section {
-            padding:
-              55px
-              0
-              90px;
-          }
-
-          .hero-title {
-            font-size: 50px;
-          }
-
-          .main-search {
+          .search-grid {
             grid-template-columns:
+              2fr
               1fr
-              1fr
-              auto;
+              1fr;
           }
 
-          .search-field + .search-field {
-            border-left: none;
+          .search-grid .search-field:first-child {
+            grid-column: span 2;
           }
 
-          .job-card {
+          .search-grid .search-button {
+            grid-column: span 1;
+          }
+
+          .job-grid,
+          .loading-grid {
             grid-template-columns:
-              56px
-              minmax(0, 1fr);
-          }
-
-          .job-score {
-            grid-column: 2;
-            align-items: flex-start;
-            flex-direction: row;
-          }
-
-          .semantic {
-            text-align: left;
+              repeat(
+                2,
+                minmax(0, 1fr)
+              );
           }
         }
 
+        /* ====================================================
+           MOBILE
+        ==================================================== */
 
-        @media (max-width: 650px) {
+        @media (max-width: 700px) {
 
-          .jobs-container {
-            width:
-              calc(100% - 24px);
-          }
-
-          .hero-section {
+          .jobs-page {
             padding:
-              40px
-              0
-              75px;
+              28px
+              15px
+              60px;
           }
 
           .hero-title {
-            font-size: 42px;
+            font-size: 40px;
 
-            letter-spacing: -2px;
+            letter-spacing: -1.8px;
           }
 
           .hero-description {
             font-size: 14px;
           }
 
-          .search-wrapper {
-            margin-top: -40px;
+          .search-panel {
+            padding: 10px;
+
+            border-radius: 17px;
           }
 
-          .main-search {
+          .search-grid {
             display: flex;
 
             flex-direction: column;
 
-            padding: 8px;
+            gap: 8px;
           }
 
-          .search-field {
-            border-bottom:
-              1px solid
-              #eeeae7;
-
-            padding: 2px 0;
+          .search-grid .search-field:first-child {
+            grid-column: auto;
           }
 
           .search-button {
             width: 100%;
           }
 
-          .filter-row {
-            grid-template-columns: 1fr;
-
-            padding:
-              0
-              8px
-              8px;
-          }
-
-          .results-section {
-            padding-top: 50px;
-          }
-
           .results-header {
-            flex-direction: column;
-
             align-items: flex-start;
+
+            flex-direction: column;
+          }
+
+          .job-grid,
+          .loading-grid {
+            grid-template-columns: 1fr;
           }
 
           .job-card {
-            grid-template-columns:
-              48px
-              minmax(0, 1fr);
+            min-height: 315px;
+          }
+        }
 
-            padding:
-              18px;
+        @media (max-width: 430px) {
+
+          .jobs-page {
+            padding-left: 11px;
+            padding-right: 11px;
           }
 
-          .company-logo {
-            width: 46px;
-            height: 46px;
+          .hero-title {
+            font-size: 34px;
           }
 
-          .job-title {
-            font-size: 16px;
-
-            white-space: normal;
+          .hero-badge {
+            font-size: 10px;
           }
 
-          .job-score {
-            grid-column: 1 / -1;
-
-            flex-wrap: wrap;
-
-            margin-top: 4px;
+          .results-title {
+            font-size: 22px;
           }
 
-          .view-button {
-            display: none;
+          .job-card {
+            padding: 16px;
           }
         }
 
       `}</style>
 
 
-      {/* ========================================================
-          HERO
-      ======================================================== */}
+      {/* ======================================================
+          MAIN CONTAINER
+      ====================================================== */}
 
-      <section className="hero-section">
+      <div className="jobs-container">
 
-        <div className="jobs-container">
+        {/* ======================================================
+            HERO
+        ====================================================== */}
 
-          <div className="hero-content">
+        <section className="hero">
 
-            <div className="hero-eyebrow">
-              <span className="hero-eyebrow-dot" />
-              AI-powered job search
-            </div>
-
-            <h1 className="hero-title">
-              Find the right job.
-              <br />
-              Let AI find the{" "}
-              <span className="hero-highlight">
-                match.
-              </span>
-            </h1>
-
-            <p className="hero-description">
-              Discover opportunities that match your
-              skills, experience and career goals using
-              AI-powered semantic search.
-            </p>
-
+          <div className="hero-badge">
+            ✦ AI-POWERED JOB SEARCH
           </div>
 
-        </div>
+          <h1 className="hero-title">
+            Find your next{" "}
+            <span className="hero-gradient">
+              opportunity.
+            </span>
+          </h1>
 
-      </section>
+          <p className="hero-description">
+            Discover jobs that match your skills and
+            experience using AI-powered semantic search.
+          </p>
 
-
-      {/* ========================================================
-          SEARCH
-      ======================================================== */}
-
-      <div className="search-wrapper">
-
-        <div className="jobs-container">
-
-          <form
-            className="search-card"
-            onSubmit={handleSearch}
-          >
-
-            <div className="main-search">
-
-              {/* JOB SEARCH */}
-
-              <div className="search-field">
-
-                <span className="search-icon">
-                  ⌕
-                </span>
-
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(event) =>
-                    setQuery(event.target.value)
-                  }
-                  placeholder="Search by job title, skills or company"
-                  className="search-input"
-                />
-
-              </div>
+        </section>
 
 
-              {/* LOCATION */}
+        {/* ======================================================
+            SEARCH PANEL
+        ====================================================== */}
 
-              <div className="search-field">
+        <form
+          onSubmit={handleSearch}
+          className="search-panel"
+        >
 
-                <span className="search-icon">
-                  ⌖
-                </span>
+          <div className="search-grid">
 
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(event) =>
-                    setLocation(event.target.value)
-                  }
-                  placeholder="Search by city or country"
-                  className="search-input location-input"
-                />
+            {/* QUERY */}
 
-              </div>
+            <div className="search-field">
 
+              <span className="field-icon">
+                🔍
+              </span>
 
-              {/* BUTTON */}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="search-button"
-              >
-                {loading
-                  ? "Searching..."
-                  : "Search jobs"}
-              </button>
+              <input
+                type="text"
+                value={query}
+                onChange={(event) =>
+                  setQuery(event.target.value)
+                }
+                placeholder="Job title, skills or keywords"
+                className="search-input"
+              />
 
             </div>
 
 
-            {/* FILTERS */}
+            {/* LOCATION */}
 
-            <div className="filter-row">
+            <div className="search-field">
+
+              <span className="field-icon">
+                📍
+              </span>
+
+              <input
+                type="text"
+                value={location}
+                onChange={(event) =>
+                  setLocation(event.target.value)
+                }
+                placeholder="Location"
+                className="search-input"
+              />
+
+            </div>
+
+
+            {/* SKILL */}
+
+            <div className="search-field">
+
+              <span className="field-icon">
+                ✦
+              </span>
 
               <input
                 type="text"
@@ -1301,8 +1345,47 @@ function Jobs() {
                   setSkill(event.target.value)
                 }
                 placeholder="Skill"
-                className="filter-input"
+                className="search-input"
               />
+
+            </div>
+
+
+            {/* SOURCE */}
+
+            <div className="search-field">
+
+              <span className="field-icon">
+                ⌄
+              </span>
+
+              <select
+                value={source}
+                onChange={(event) =>
+                  setSource(event.target.value)
+                }
+                className="search-input"
+              >
+                <option value="">
+                  All sources
+                </option>
+
+                {sources.map((sourceOption) => (
+                  <option
+                    key={sourceOption}
+                    value={sourceOption}
+                  >
+                    {sourceOption}
+                  </option>
+                ))}
+              </select>
+
+            </div>
+
+
+            {/* EXPERIENCE */}
+
+            <div className="search-field">
 
               <input
                 type="number"
@@ -1311,67 +1394,72 @@ function Jobs() {
                 onChange={(event) =>
                   setExperience(event.target.value)
                 }
-                placeholder="Experience in years"
-                className="filter-input"
+                placeholder="Experience"
+                className="search-input experience-input"
               />
-
-              <div className="filter-input" style={{
-                display: "flex",
-                alignItems: "center",
-                color: "#8a848b"
-              }}>
-                AI semantic matching
-              </div>
 
             </div>
 
-          </form>
 
+            {/* SEARCH */}
 
-          {/* POPULAR */}
-
-          <div className="quick-searches">
-
-            <span className="popular-label">
-              Popular:
-            </span>
-
-            {quickSearches.map((item) => (
-
-              <button
-                key={item}
-                type="button"
-                onClick={() =>
-                  handleQuickSearch(item)
-                }
-                className="quick-button"
-              >
-                {item}
-              </button>
-
-            ))}
+            <button
+              type="submit"
+              disabled={loading}
+              className="search-button"
+            >
+              {loading
+                ? "Searching..."
+                : "✨ Search"}
+            </button>
 
           </div>
 
+        </form>
 
-          {/* ERROR */}
 
-          {error && (
-            <div className="error-box">
-              ⚠ {error}
-            </div>
-          )}
+        {/* ======================================================
+            QUICK SEARCH
+        ====================================================== */}
+
+        <div className="quick-searches">
+
+          <span className="popular-label">
+            Popular:
+          </span>
+
+          {quickSearches.map((item) => (
+
+            <button
+              key={item}
+              type="button"
+              onClick={() =>
+                handleQuickSearch(item)
+              }
+              className="quick-button"
+            >
+              {item}
+            </button>
+
+          ))}
 
         </div>
 
-      </div>
+
+        {/* ======================================================
+            ERROR
+        ====================================================== */}
+
+        {error && (
+          <div className="error-box">
+            ⚠️ {error}
+          </div>
+        )}
 
 
-      {/* ========================================================
-          RESULTS
-      ======================================================== */}
-
-      <main className="jobs-container results-section">
+        {/* ======================================================
+            RESULTS HEADER
+        ====================================================== */}
 
         {searched && !error && (
 
@@ -1381,31 +1469,40 @@ function Jobs() {
 
               <h2 className="results-title">
 
-                <span className="results-number">
+                <span className="results-title-number">
                   {jobs.length}
                 </span>{" "}
 
-                <span className="results-muted">
+                <span className="results-title-light">
                   AI-matched jobs
                 </span>
 
               </h2>
 
               <p className="results-subtitle">
-                Ranked according to relevance to your search
+                Ranked by AI relevance to your search
               </p>
 
             </div>
 
+
             <div className="ai-ranked">
-              <span className="ai-star">✦</span>
+
+              <span className="ai-ranked-icon">
+                ✦
+              </span>
+
               AI Ranked
-              <span>•</span>
+
+              <span>
+                •
+              </span>
+
               Best Match
+
             </div>
 
           </div>
-
         )}
 
 
@@ -1415,14 +1512,16 @@ function Jobs() {
 
         {loading && (
 
-          <div className="loading-list">
+          <div className="loading-grid">
 
-            {[1, 2, 3, 4, 5].map((item) => (
-              <div
-                key={item}
-                className="skeleton"
-              />
-            ))}
+            {[1, 2, 3, 4, 5, 6].map(
+              (item) => (
+                <div
+                  key={item}
+                  className="skeleton"
+                />
+              )
+            )}
 
           </div>
 
@@ -1430,7 +1529,7 @@ function Jobs() {
 
 
         {/* ======================================================
-            EMPTY
+            EMPTY STATE
         ====================================================== */}
 
         {searched &&
@@ -1441,7 +1540,7 @@ function Jobs() {
             <div className="empty-state">
 
               <div className="empty-icon">
-                ⌕
+                🔎
               </div>
 
               <h3 className="empty-title">
@@ -1459,14 +1558,14 @@ function Jobs() {
 
 
         {/* ======================================================
-            JOB LIST
+            JOB GRID
         ====================================================== */}
 
         {!loading &&
           !error &&
           jobs.length > 0 && (
 
-            <div className="job-list">
+            <div className="job-grid">
 
               {jobs.map((job, index) => {
 
@@ -1476,8 +1575,9 @@ function Jobs() {
                 const semanticScore =
                   getSemanticScore(job);
 
-                const matchClass =
-                  getMatchClass(matchScore);
+                const matchStyle =
+                  getMatchStyle(matchScore);
+
 
                 return (
 
@@ -1490,137 +1590,182 @@ function Jobs() {
                     className="job-card"
                   >
 
-                    {/* COMPANY */}
+                    {/* ========================================
+                        COMPANY HEADER
+                    ======================================== */}
 
-                    <div className="company-logo">
+                    <div className="company-header">
 
-                      {getInitials(
-                        job.company
-                      )}
+                      <div className="company-info">
 
-                    </div>
-
-
-                    {/* CONTENT */}
-
-                    <div className="job-content">
-
-                      <div className="company-name">
-
-                        {job.company ||
-                          "Company"}
-
-                        <span className="verified">
-                          ✓ Verified opportunity
-                        </span>
-
-                      </div>
+                        <div className="company-logo">
+                          {getInitials(
+                            job.company
+                          )}
+                        </div>
 
 
-                      <h3 className="job-title">
-                        {job.title ||
-                          "Untitled Job"}
-                      </h3>
+                        <div
+                          style={{
+                            minWidth: 0,
+                          }}
+                        >
 
-
-                      <div className="job-meta">
-
-                        <span className="meta-item">
-                          📍{" "}
-                          <strong>
-                            {job.location ||
-                              "Location not specified"}
-                          </strong>
-                        </span>
-
-                        {job.employment_type && (
-                          <span className="meta-item">
-                            💼{" "}
-                            <strong>
-                              {job.employment_type}
-                            </strong>
-                          </span>
-                        )}
-
-                      </div>
-
-
-                      {job.description && (
-
-                        <p className="job-description">
-                          {job.description}
-                        </p>
-
-                      )}
-
-
-                      {job.skills &&
-                        job.skills.length > 0 && (
-
-                          <div className="skills">
-
-                            {job.skills
-                              .slice(0, 6)
-                              .map(
-                                (
-                                  jobSkill,
-                                  skillIndex
-                                ) => (
-
-                                  <span
-                                    key={skillIndex}
-                                    className="skill-pill"
-                                  >
-                                    {jobSkill}
-                                  </span>
-
-                                )
-                              )}
-
-                            {job.skills.length > 6 && (
-
-                              <span className="more-pill">
-                                +
-                                {job.skills.length - 6}
-                              </span>
-
-                            )}
-
+                          <div className="company-name">
+                            {job.company ||
+                              "Company"}
                           </div>
 
-                        )}
+                          <div className="verified-text">
+                            ✓ Verified opportunity
+                          </div>
+
+                        </div>
+
+                      </div>
+
+
+                      {/* AI MATCH */}
+
+                      <div
+                        className="match-badge"
+                        style={{
+                          background:
+                            matchStyle.background,
+                          color:
+                            matchStyle.color,
+                          border:
+                            matchStyle.border,
+                        }}
+                      >
+                        ✦ {matchScore}%
+                      </div>
 
                     </div>
 
 
-                    {/* SCORE */}
+                    {/* ========================================
+                        JOB TITLE
+                    ======================================== */}
 
-                    <div className="job-score">
+                    <h3 className="job-title">
+                      {job.title ||
+                        "Untitled Job"}
+                    </h3>
 
-                      <div
-                        className={`match-badge ${matchClass}`}
-                      >
-                        ✦ {matchScore}% Match
-                      </div>
 
-                      <div className="semantic">
+                    {/* ========================================
+                        META
+                    ======================================== */}
 
-                        <div className="semantic-label">
-                          Semantic match
+                    <div className="job-meta">
+
+                      <span className="meta-pill">
+                        📍
+                        {job.location ||
+                          "Location not specified"}
+                      </span>
+
+                      {job.employment_type && (
+                        <span className="meta-pill">
+                          💼
+                          {job.employment_type}
+                        </span>
+                      )}
+
+                    </div>
+
+
+                    {/* ========================================
+                        DESCRIPTION
+                    ======================================== */}
+
+                    {job.description && (
+
+                      <p className="job-description">
+                        {job.description}
+                      </p>
+
+                    )}
+
+
+                    {/* ========================================
+                        SKILLS
+                    ======================================== */}
+
+                    {job.skills &&
+                      job.skills.length > 0 && (
+
+                        <div className="skills-container">
+
+                          {job.skills
+                            .slice(0, 6)
+                            .map(
+                              (
+                                jobSkill,
+                                skillIndex
+                              ) => (
+
+                                <span
+                                  key={
+                                    skillIndex
+                                  }
+                                  className="skill-pill"
+                                >
+                                  {jobSkill}
+                                </span>
+
+                              )
+                            )}
+
+
+                          {job.skills.length >
+                            6 && (
+
+                            <span className="more-pill">
+                              +
+                              {job.skills.length -
+                                6}
+                            </span>
+
+                          )}
+
                         </div>
 
-                        <div className="semantic-value">
-                          {semanticScore}%
+                      )}
+
+
+                    {/* ========================================
+                        BOTTOM
+                    ======================================== */}
+
+                    <div className="job-bottom">
+
+                      <div className="divider" />
+
+                      <div className="bottom-row">
+
+                        <div>
+
+                          <div className="semantic-label">
+                            Semantic match
+                          </div>
+
+                          <strong className="semantic-score">
+                            {semanticScore}%
+                          </strong>
+
                         </div>
 
-                      </div>
 
-                      <button
-                        type="button"
-                        className="view-button"
-                      >
-                        View job →
-                      </button>
+                        <button
+                          type="button"
+                          className="match-button"
+                        >
+                          AI Match →
+                        </button>
+
+                      </div>
 
                     </div>
 
@@ -1634,7 +1779,7 @@ function Jobs() {
 
           )}
 
-      </main>
+      </div>
 
     </div>
   );
