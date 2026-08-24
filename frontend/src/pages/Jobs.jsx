@@ -117,7 +117,7 @@ function Jobs() {
     }
     return {
       background: "#f5f3ff",
-      color: "#7c3aed",
+      color: "#7a2f6e",
       border: "1px solid #ddd6fe",
     };
   };
@@ -142,7 +142,7 @@ function Jobs() {
 
         .jobs-page {
           min-height: 100vh;
-          background: #f7f8fa;
+          background: #f7f4ee;
           color: #111827;
           font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
           padding: 46px 28px 80px;
@@ -164,8 +164,8 @@ function Jobs() {
           gap: 7px;
           padding: 7px 13px;
           border-radius: 999px;
-          background: #f0e9fb;
-          color: #6d28d9;
+          background: #f3e8f4;
+          color: #7a2f6e;
           font-size: 12px;
           font-weight: 800;
           letter-spacing: 0.3px;
@@ -176,7 +176,7 @@ function Jobs() {
           width: 6px;
           height: 6px;
           border-radius: 50%;
-          background: #6d28d9;
+          background: #7a2f6e;
         }
 
         .hero-title {
@@ -190,7 +190,7 @@ function Jobs() {
         }
 
         .hero-gradient {
-          color: #7c3aed;
+          color: #7a2f6e;
         }
 
         .hero-description {
@@ -269,7 +269,7 @@ function Jobs() {
           padding: 0 26px;
           border: none;
           border-radius: 12px;
-          background: #5b2a86;
+          background: #3f1d3a;
           color: white;
           font-size: 13px;
           font-weight: 700;
@@ -314,7 +314,7 @@ function Jobs() {
         }
 
         .quick-button:hover {
-          color: #6d28d9;
+          color: #7a2f6e;
           border-color: #ddd0f5;
           background: #f8f5fd;
         }
@@ -350,7 +350,7 @@ function Jobs() {
           color: #111827;
         }
 
-        .results-title-number { color: #6d28d9; }
+        .results-title-number { color: #7a2f6e; }
         .results-title-light { color: #6b7280; font-weight: 500; }
 
         .results-subtitle {
@@ -372,7 +372,7 @@ function Jobs() {
           font-weight: 600;
         }
 
-        .ai-ranked-icon { color: #7c3aed; font-size: 14px; }
+        .ai-ranked-icon { color: #7a2f6e; font-size: 14px; }
 
         /* JOB GRID */
 
@@ -424,7 +424,7 @@ function Jobs() {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #6d28d9;
+          color: #7a2f6e;
           font-size: 12px;
           font-weight: 800;
         }
@@ -491,7 +491,7 @@ function Jobs() {
         .skill-pill {
           background: #f8f4fd;
           border: 1px solid #ecdffa;
-          color: #6d28d9;
+          color: #7a2f6e;
           padding: 5px 8px;
           border-radius: 999px;
           font-size: 10px;
@@ -524,7 +524,7 @@ function Jobs() {
         .match-button {
           border: 1px solid #e1e4ef;
           background: #ffffff;
-          color: #6d28d9;
+          color: #7a2f6e;
           padding: 8px 11px;
           border-radius: 9px;
           font-size: 10px;
