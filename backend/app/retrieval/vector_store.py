@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import hashlib
 import math
@@ -18,6 +19,15 @@ from qdrant_client.models import (
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 QDRANT_PATH = PROJECT_ROOT / "data" / "qdrant"
+
+# If QDRANT_URL is set (e.g. a Qdrant Cloud cluster URL), the client
+# connects over the network using it (+ QDRANT_API_KEY if provided).
+# Otherwise it falls back to a local on-disk Qdrant store, which is
+# convenient for local development but NOT durable on most free
+# hosting platforms (disk is wiped on redeploy/restart).
+QDRANT_URL = os.environ.get("QDRANT_URL")
+
+QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
 
 COLLECTION_NAME = "jobs"
 
@@ -135,21 +145,30 @@ def create_embeddings(
 
 def get_qdrant_client():
     """
-    Create and reuse a local persistent Qdrant client.
+    Create and reuse a Qdrant client.
+
+    Uses a remote Qdrant instance (e.g. Qdrant Cloud) when QDRANT_URL
+    is set. Falls back to a local on-disk store for development.
     """
 
     global _client
 
     if _client is None:
 
-        QDRANT_PATH.mkdir(
-            parents=True,
-            exist_ok=True,
-        )
+        if QDRANT_URL:
+            _client = QdrantClient(
+                url=QDRANT_URL,
+                api_key=QDRANT_API_KEY,
+            )
+        else:
+            QDRANT_PATH.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
 
-        _client = QdrantClient(
-            path=str(QDRANT_PATH)
-        )
+            _client = QdrantClient(
+                path=str(QDRANT_PATH)
+            )
 
     return _client
 
