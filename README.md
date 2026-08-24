@@ -676,10 +676,6 @@ Check that PostgreSQL is running and verify:
 
 ---
 
-# 👥 Contributors
-
-### Deepthi
-
 AI / Data / Full-Stack Development
 
 ### Project Collaborator
