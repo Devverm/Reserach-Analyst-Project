@@ -5,7 +5,7 @@
 ---
 
 ## 📸 Project Preview
-
+ 
 The application provides a professional and consistent interface with a warm creamy background, white cards, and muted mauve accents.
 
 ### Jobs
