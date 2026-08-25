@@ -1,18 +1,51 @@
-# 🤖 AI Job Research & Matching Platform
+# 🤖 JobMatch — AI Job Research & Matching Platform
+
+![Status](https://img.shields.io/badge/status-live-brightgreen)
+![Backend](https://img.shields.io/badge/backend-FastAPI-009688)
+![Frontend](https://img.shields.io/badge/frontend-React%20%2B%20Vite-61DAFB)
+![Database](https://img.shields.io/badge/database-PostgreSQL-336791)
+![Vector%20DB](https://img.shields.io/badge/vector%20db-Qdrant-DC244C)
+![License](https://img.shields.io/badge/license-Educational-lightgrey)
 
 > An AI-powered job discovery platform that helps users search, understand, and find relevant job opportunities through natural-language search, semantic matching, personalized recommendations, and resume-based matching.
+
+**Live app:** https://reserach-analyst-project.onrender.com
+**Demo video:** https://drive.google.com/file/d/1uQmn0x3y66qPHPfD3rBNqjfA8NKOS9Yg/view?usp=sharing
+
+---
+
+## 📑 Table of Contents
+
+- [Project Preview](#-project-preview)
+- [Overview](#-overview)
+- [Core Features](#-core-features)
+- [System Architecture](#️-system-architecture)
+- [Technology Stack](#️-technology-stack)
+- [Dataset](#-dataset)
+- [Project Structure](#-project-structure)
+- [Installation & Setup](#️-installation--setup)
+- [Running the Application](#️-run-the-application)
+- [API Reference](#-api-reference)
+- [Testing](#-testing)
+- [UI Design](#-ui-design)
+- [Security](#-security)
+- [Git Workflow](#-git-workflow)
+- [Common Issues](#️-common-issues)
+- [Project Status](#-project-status)
+- [Future Improvements](#-future-improvements)
+- [License](#-license)
 
 ---
 
 ## 📸 Project Preview
- 
+
 The application provides a professional and consistent interface with a warm creamy background, white cards, and muted mauve accents.
 
 ### Jobs
 
 ![Jobs Page](screenshots/jobs.png)
 
-The **Jobs** section allows users to browse and search available job opportunities using information such as job title, company, location, skills, and other attributes.
+The **Jobs** section allows users to browse and search available job opportunities using information such as job title, company, location, skills, experience, and job source platform.
 
 ### AI Job Assistant
 
@@ -22,7 +55,9 @@ The **AI Job Assistant** allows users to describe the type of job they are looki
 
 Example:
 
-> Find remote Python developer jobs
+```text
+Find remote Python developer jobs
+```
 
 The assistant processes the request and helps retrieve relevant opportunities.
 
@@ -53,7 +88,7 @@ Supported formats:
 
 ---
 
-# 📌 Overview
+## 📌 Overview
 
 Traditional job portals often depend heavily on keyword-based search.
 
@@ -79,11 +114,11 @@ The application combines:
 
 ---
 
-# ✨ Core Features
+## ✨ Core Features
 
-## 🔎 Job Search
+### 🔎 Job Search & Filtering
 
-Users can browse and search a large collection of job opportunities.
+Users can browse and search a large collection of job opportunities, and narrow results using multiple filters at once.
 
 Job information can include:
 
@@ -91,13 +126,30 @@ Job information can include:
 - Company
 - Location
 - Skills
-- Experience
+- Experience (years)
 - Employment type
-- Other job attributes
+- Source platform
 
 Structured job data is stored in PostgreSQL.
 
-## 🤖 AI Job Assistant
+### 🗂️ Job Source Filter
+
+Because job listings are aggregated from many different scraped platforms, raw source values are normalized into a clean, recognizable set of categories for filtering:
+
+| Category | Description |
+|---|---|
+| LinkedIn | Jobs sourced from LinkedIn |
+| Naukri | Jobs sourced from Naukri.com |
+| Indeed | Jobs sourced from Indeed |
+| Internshala | Jobs sourced from Internshala |
+| Glassdoor | Jobs sourced from Glassdoor |
+| BeBee | Jobs sourced from BeBee |
+| GrabJobs | Jobs sourced from GrabJobs |
+| Other | Any remaining source not in the list above |
+
+Users can select a source from the dropdown on the Jobs page to view listings from that platform only, in addition to keyword, location, skill, and experience filters.
+
+### 🤖 AI Job Assistant
 
 The AI Job Assistant supports natural-language job discovery.
 
@@ -123,7 +175,7 @@ Capabilities include:
 - Relevant job retrieval
 - Ranked job results
 
-## 🧠 Semantic Job Matching
+### 🧠 Semantic Job Matching
 
 The platform uses semantic similarity to identify jobs related in meaning, even when exact keywords differ.
 
@@ -137,7 +189,7 @@ can be semantically related to:
 AI Engineer with Deep Learning experience
 ```
 
-### Semantic Search Flow
+**Semantic Search Flow**
 
 ```text
 User Query
@@ -155,15 +207,15 @@ Matching / Ranking
 Final Results
 ```
 
-## 🎯 Personalized Recommendations
+### 🎯 Personalized Recommendations
 
 Jobs are ranked using multiple matching factors:
 
 - Semantic similarity
 - Skill match
-- Role match    
+- Role match
 - Location match
-- Overall relevance        
+- Overall relevance
 
 Example:
 
@@ -175,7 +227,7 @@ Role           88%
 Location       85%
 ```
 
-## 📄 Resume Match
+### 📄 Resume Match
 
 Users can upload resumes to find relevant job opportunities.
 
@@ -184,7 +236,7 @@ Supported formats:
 - PDF
 - DOCX
 
-Flow:
+**Flow**
 
 ```text
 Resume Upload
@@ -206,7 +258,7 @@ PDF files are processed using `pypdf`, DOCX files using `python-docx`, and FastA
 
 ---
 
-# 🏗️ System Architecture
+## 🏗️ System Architecture
 
 ```text
                          ┌───────────────────┐
@@ -246,9 +298,18 @@ PDF files are processed using `pypdf`, DOCX files using `python-docx`, and FastA
                          └───────────────────┘
 ```
 
+**Deployment topology**
+
+| Component | Hosting | Notes |
+|---|---|---|
+| Frontend (static site) | Render | Vite production build served as static assets |
+| Backend (web service) | Render | FastAPI on Python 3, free tier |
+| Relational database | Neon | Managed PostgreSQL, serverless |
+| Vector database | Qdrant Cloud | Managed vector search cluster |
+
 ---
 
-# 🛠️ Technology Stack
+## 🛠️ Technology Stack
 
 | Layer | Technology |
 |---|---|
@@ -265,10 +326,11 @@ PDF files are processed using `pypdf`, DOCX files using `python-docx`, and FastA
 | DOCX Processing | python-docx |
 | File Upload | python-multipart |
 | Version Control | Git / GitHub |
+| Hosting | Render |
 
 ---
 
-# 📊 Dataset
+## 📊 Dataset
 
 The raw job dataset is stored at:
 
@@ -301,9 +363,11 @@ Duplicates:  11,190
 Errors:      0
 ```
 
+The same dataset was subsequently embedded and indexed into Qdrant, giving **45,579 vectors** available for semantic search.
+
 ---
 
-# 📁 Project Structure
+## 📁 Project Structure
 
 ```text
 Research Analyst project/
@@ -312,11 +376,21 @@ Research Analyst project/
 │   ├── app/
 │   │   ├── api/
 │   │   │   ├── routes/
+│   │   │   │   └── jobs.py          # Job search, semantic search, sources
 │   │   │   ├── resume.py
 │   │   │   └── ...
+│   │   ├── models/
+│   │   │   └── job.py               # SQLAlchemy Job model
+│   │   ├── retrieval/
+│   │   │   ├── retriever.py         # Qdrant vector retrieval
+│   │   │   ├── ranking.py           # Hybrid ranking logic
+│   │   │   └── vector_store.py      # Qdrant client
 │   │   ├── services/
 │   │   │   ├── resume_service.py
 │   │   │   └── ...
+│   │   ├── utils/
+│   │   │   ├── normalization.py     # Source/text/skill normalization
+│   │   │   └── deduplication.py
 │   │   └── main.py
 │   └── requirements.txt
 │
@@ -331,7 +405,8 @@ Research Analyst project/
 │   │   │   ├── Assistant.jsx
 │   │   │   ├── Recommendations.jsx
 │   │   │   └── ...
-│   │   └── ...
+│   │   └── services/
+│   │       └── api.js
 │   └── package.json
 │
 ├── scripts/
@@ -367,16 +442,16 @@ Research Analyst project/
 
 ---
 
-# ⚙️ Installation & Setup
+## ⚙️ Installation & Setup
 
-## Clone
+### Clone
 
 ```bash
 git clone <YOUR_GITHUB_REPOSITORY_URL>
 cd "Research Analyst project"
 ```
 
-## Backend
+### Backend
 
 ```bash
 python -m venv venv
@@ -392,7 +467,7 @@ pip install python-docx
 pip install python-multipart
 ```
 
-## Environment Variables
+### Environment Variables
 
 Create `.env` using `.env.example`:
 
@@ -403,11 +478,21 @@ QDRANT_URL=YOUR_QDRANT_URL
 QDRANT_API_KEY=YOUR_QDRANT_API_KEY
 
 GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
+
+CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
 > Never commit `.env` or real credentials to GitHub.
 
-## PostgreSQL
+| Variable | Required | Description |
+|---|---|---|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `QDRANT_URL` | Yes | Qdrant Cloud cluster endpoint |
+| `QDRANT_API_KEY` | Yes | Qdrant Cloud API key |
+| `GOOGLE_API_KEY` | Optional | Reserved for future AI-assistant integrations |
+| `CORS_ORIGINS` | Yes (production) | Comma-separated list of allowed frontend origins |
+
+### PostgreSQL
 
 The application uses PostgreSQL for structured job data.
 
@@ -435,7 +520,7 @@ Verify:
 python scripts\verify_database.py
 ```
 
-## Qdrant
+### Qdrant
 
 Configure Qdrant through `.env`.
 
@@ -455,9 +540,15 @@ Vector Similarity Search
 Relevant Jobs
 ```
 
+Index the dataset:
+
+```bash
+python scripts\index_jobs.py
+```
+
 ---
 
-# ▶️ Run the Application
+## ▶️ Run the Application
 
 ### Terminal 1 — Backend
 
@@ -495,7 +586,34 @@ http://localhost:5173
 
 ---
 
-# 🧪 Testing
+## 📡 API Reference
+
+Base path: `/api/jobs`
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/jobs` | Search and filter jobs (title, location, skill, source, experience, employment type) |
+| `GET` | `/api/jobs/semantic-search` | Natural-language semantic search via Qdrant + hybrid ranking |
+| `GET` | `/api/jobs/sources` | List normalized job source categories for the filter dropdown |
+| `GET` | `/api/jobs/{job_id}` | Get a single job by database ID |
+
+**Example — filtered search**
+
+```text
+GET /api/jobs?q=python&location=bangalore&source=LinkedIn&limit=20
+```
+
+**Example — semantic search**
+
+```text
+GET /api/jobs/semantic-search?q=remote+machine+learning+engineer&limit=20
+```
+
+Full interactive documentation is available at `/docs` (Swagger UI) once the backend is running.
+
+---
+
+## 🧪 Testing
 
 ```bash
 python scripts\test_ingestion.py
@@ -511,7 +629,7 @@ python scripts\test_vector_store.py
 
 ---
 
-# 🎨 UI Design
+## 🎨 UI Design
 
 The frontend follows a consistent professional design system:
 
@@ -534,7 +652,7 @@ The same visual language is maintained across:
 
 ---
 
-# 🔐 Security
+## 🔐 Security
 
 Never commit sensitive information.
 
@@ -556,7 +674,7 @@ Use `.env` locally and `.env.example` for documenting required variables.
 
 ---
 
-# 🔀 Git Workflow
+## 🔀 Git Workflow
 
 ```bash
 git pull origin main
@@ -576,7 +694,7 @@ git push origin main
 
 ---
 
-# ⚠️ Common Issues
+## ⚠️ Common Issues
 
 ### Backend module error
 
@@ -621,9 +739,13 @@ Check that PostgreSQL is running and verify:
 - Port
 - `DATABASE_URL`
 
+### 422 error on an API route
+
+If a route with a static path segment (e.g. `/sources`) returns a 422 "unable to parse string as an integer" error, check that it's declared **above** any dynamic route like `/{job_id}` in the router file — FastAPI matches routes in declaration order.
+
 ---
 
-# 📈 Project Status
+## 📈 Project Status
 
 ### Backend
 
@@ -638,6 +760,7 @@ Check that PostgreSQL is running and verify:
 - [x] DOCX processing
 - [x] Recommendation APIs
 - [x] Semantic search infrastructure
+- [x] Job source normalization & filtering
 
 ### Frontend
 
@@ -648,6 +771,7 @@ Check that PostgreSQL is running and verify:
 - [x] Recommendation cards
 - [x] Consistent UI design
 - [x] Responsive styling
+- [x] Source filter dropdown
 
 ### Data & Retrieval
 
@@ -657,9 +781,16 @@ Check that PostgreSQL is running and verify:
 - [x] Embedding pipeline
 - [x] Qdrant vector search infrastructure
 
+### Deployment
+
+- [x] Backend deployed (Render)
+- [x] Frontend deployed (Render)
+- [x] Managed PostgreSQL (Neon)
+- [x] Managed vector database (Qdrant Cloud)
+
 ---
 
-# 🚀 Future Improvements
+## 🚀 Future Improvements
 
 - Advanced job filtering
 - Improved recommendation ranking
@@ -670,20 +801,23 @@ Check that PostgreSQL is running and verify:
 - Advanced resume analysis
 - Explainable recommendation scores
 - Improved semantic retrieval
-- Production deployment
 - Automated job-data updates
 - Analytics dashboard
+- Custom domain and HTTPS certificate
+- Paid-tier hosting to remove cold-start delay
+
+---
 
 ## 🔗 Demo & Deployment
 
-- 🎥 **Demo Video:**  
+- 🎥 **Demo Video:**
   https://drive.google.com/file/d/1uQmn0x3y66qPHPfD3rBNqjfA8NKOS9Yg/view?usp=sharing
 
-- 🚀 **Live Deployment:**  
+- 🚀 **Live Deployment:**
   https://reserach-analyst-project.onrender.com
 
 ---
-  
-# 📄 License
+
+## 📄 License
 
 This project is currently intended for educational, portfolio, and development purposes.
