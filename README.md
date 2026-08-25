@@ -9,9 +9,6 @@
 
 > An AI-powered job discovery platform that helps users search, understand, and find relevant job opportunities through natural-language search, semantic matching, personalized recommendations, and resume-based matching.
 
-**Live app:** https://reserach-analyst-project.onrender.com
-**Demo video:** https://drive.google.com/file/d/1uQmn0x3y66qPHPfD3rBNqjfA8NKOS9Yg/view?usp=sharing
-
 ---
 
 ## 📑 Table of Contents
