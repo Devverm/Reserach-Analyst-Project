@@ -40,13 +40,13 @@ The application provides a professional and consistent interface with a warm cre
 
 ### Jobs
 
-![Jobs Page](screenshots/jobs.png)
+![Jobs Page](C:\Users\yashp\Pictures\{A528ED2E-A3F9-41D2-8581-1D6599EADA5C}.png)
 
 The **Jobs** section allows users to browse and search available job opportunities using information such as job title, company, location, skills, experience, and job source platform.
 
 ### AI Job Assistant
 
-![AI Job Assistant](screenshots/ai-assistant.png)
+![AI Job Assistant](C:\Users\yashp\Pictures\{6F8132E1-8AC7-4D5B-9D52-B87222D246A4}.png)
 
 The **AI Job Assistant** allows users to describe the type of job they are looking for using natural language.
 
@@ -60,7 +60,7 @@ The assistant processes the request and helps retrieve relevant opportunities.
 
 ### Recommendations
 
-![Recommendations](screenshots/recommendations.png)
+![Recommendations](C:\Users\yashp\Pictures\{3D090FA1-AD9A-4544-B30F-F5355ED135CA}.png)
 
 The **Recommendations** section presents personalized job matches.
 
@@ -74,7 +74,7 @@ Recommendations can show:
 
 ### Resume Match
 
-![Resume Match](screenshots/resume-match.png)
+![Resume Match](C:\Users\yashp\Pictures\{CE69849F-C6DA-4126-80BF-02F3A6AE53F1}.png)
 
 The **Resume Match** functionality allows users to upload a resume and receive job recommendations based on their profile.
 
